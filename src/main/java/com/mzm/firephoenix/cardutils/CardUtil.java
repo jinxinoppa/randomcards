@@ -5,10 +5,15 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.RandomUtils;
 import org.apache.poi.xssf.usermodel.XSSFCell;
 import org.apache.poi.xssf.usermodel.XSSFRow;
@@ -129,7 +134,7 @@ public class CardUtil {
 		return sheet;
 	}
 
-	public void test(String count) {
+	public void printAndExcel(String count) {
 		int totalCount = Integer.valueOf(count);
 		int fullHouseCount = 0;
 		int flushCount = 0;
@@ -149,62 +154,63 @@ public class CardUtil {
 		byte[] cardArray = null;
 
 		XSSFWorkbook workbook = new XSSFWorkbook();
-
+		CardResult cr = new CardResult();
 		for (int i = 0; i < totalCount; i++) {
 			cardArray = randomCards();
-			if (fiveBars(cardArray)) {
+			cr.setCards(cardArray);
+			if (fiveBars(cardArray, cr).isWin()) {
 				fiveBars++;
 				appendCards(cardArray, getHSSFSheet(workbook, "五鬼"));
 				continue;
-			} else if (royalFlush(cardArray)) {
+			} else if (royalFlush(cardArray, cr).isWin()) {
 				royalFlush++;
 				appendCards(cardArray, getHSSFSheet(workbook, "同花大顺"));
 				continue;
-			} else if (fiveOfAKind(cardArray)) {
+			} else if (fiveOfAKind(cardArray, cr).isWin()) {
 				fiveOfAKind++;
 				appendCards(cardArray, getHSSFSheet(workbook, "五梅"));
 				continue;
-			} else if (straightFlush(cardArray)) {
+			} else if (straightFlush(cardArray, cr).isWin()) {
 				straightFlush++;
 				appendCards(cardArray, getHSSFSheet(workbook, "同花小顺"));
 				continue;
-			} else if (fourOfAKindJA(cardArray)) {
+			} else if (fourOfAKindJA(cardArray, cr).isWin()) {
 				fourOfAKindJA++;
 				appendCards(cardArray, getHSSFSheet(workbook, "大四梅"));
 				continue;
-			} else if (fourOfAKindTwoTen(cardArray)) {
+			} else if (fourOfAKindTwoTen(cardArray, cr).isWin()) {
 				fourOfAKindTwoTen++;
 				appendCards(cardArray, getHSSFSheet(workbook, "小四梅"));
 				continue;
-			} else if (fullHouse(cardArray)) {
+			} else if (fullHouse(cardArray, cr).isWin()) {
 				fullHouseCount++;
 				appendCards(cardArray, getHSSFSheet(workbook, "葫芦"));
 				continue;
-			} else if (flush(cardArray)) {
+			} else if (flush(cardArray, cr).isWin()) {
 				flushCount++;
 				appendCards(cardArray, getHSSFSheet(workbook, "同花"));
 				continue;
-			} else if (straight(cardArray)) {
+			} else if (straight(cardArray, cr).isWin()) {
 				straightCount++;
 				appendCards(cardArray, getHSSFSheet(workbook, "顺子"));
 				continue;
-			} else if (threeOfAKind(cardArray)) {
+			} else if (threeOfAKind(cardArray, cr).isWin()) {
 				threeOfAKindCount++;
 				appendCards(cardArray, getHSSFSheet(workbook, "三条"));
 				continue;
-			} else if (twoPairs(cardArray)) {
+			} else if (twoPairs(cardArray, cr).isWin()) {
 				twoPairsCount++;
 				appendCards(cardArray, getHSSFSheet(workbook, "两对"));
 				continue;
-			} else if (sevenBetter(cardArray)) {
+			} else if (sevenBetter(cardArray, cr).isWin()) {
 				sevenBetterCount++;
 				appendCards(cardArray, getHSSFSheet(workbook, "一对"));
 				continue;
-			} else if (fourStraight(cardArray)) {
+			} else if (fourStraight(cardArray, cr).isWin()) {
 				fourStraight++;
 				appendCards(cardArray, getHSSFSheet(workbook, "四张顺"));
 				continue;
-			} else if (fourFlush(cardArray)) {
+			} else if (fourFlush(cardArray, cr).isWin()) {
 				fourFlush++;
 				appendCards(cardArray, getHSSFSheet(workbook, "四张同花"));
 				continue;
@@ -329,7 +335,7 @@ public class CardUtil {
 		return cards;
 	}
 
-	public static boolean sevenBetter(byte[] cards) {
+	public static CardResult sevenBetter(byte[] cards, CardResult cr) {
 		int card = 0, firstCardValue = 0, secondCardValue = 0;
 		boolean hasJoker = false;
 		for (int i = 0; i < cards.length; i++) {
@@ -341,27 +347,33 @@ public class CardUtil {
 			firstCardValue = getCardValue(card);
 			if (firstCardValue >= 7 || firstCardValue == 1) {
 				if (hasJoker) {
-					return true;
+					cr.setWin(true);
+					cr.setKeepCards(new byte[] { 0, 1, 2, 3, 4 });
+					return cr;
 				}
 				for (int j = i + 1; j < cards.length; j++) {
 					card = cards[j];
 					if (card == joker) {
 						hasJoker = true;
-						return true;
+						cr.setWin(true);
+						cr.setKeepCards(new byte[] { 0, 1, 2, 3, 4 });
+						return cr;
 					}
 					secondCardValue = getCardValue(card);
 					if (secondCardValue >= 7 || secondCardValue == 1) {
 						if (hasJoker || firstCardValue == secondCardValue) {
-							return true;
+							cr.setWin(true);
+							cr.setKeepCards(new byte[] { 0, 1, 2, 3, 4 });
+							return cr;
 						}
 					}
 				}
 			}
 		}
-		return false;
+		return cr;
 	}
 
-	public static boolean twoPairs(byte[] cards) {
+	public static CardResult twoPairs(byte[] cards, CardResult cr) {
 		int card = 0, firstCardValue = 0, secondCardValue = 0, count = 0;
 		for (int i = 0; i < cards.length; i++) {
 			card = cards[i];
@@ -382,16 +394,18 @@ public class CardUtil {
 			}
 		}
 		if (count >= 2) {
-			return true;
+			cr.setWin(true);
+			cr.setKeepCards(new byte[] { 0, 1, 2, 3, 4 });
+			return cr;
 		}
-		return false;
+		return cr;
 	}
 
 	public static void main(String[] args) {
-		System.out.println(sevenBetter(new byte[] { 18, 19, 27, 17, 53 }));
+		System.out.println(orginalRoyalFlush(new byte[] { 23, 1, 12, 39, 11 }));
 	}
-	
-	public static boolean threeOfAKind(byte[] cards) {
+
+	public static CardResult threeOfAKind(byte[] cards, CardResult cr) {
 		int cardValue = 0, card = 0, jokerCount = 0;
 		Byte count = null;
 		Map<Integer, Byte> countMap = new HashMap<Integer, Byte>(5);
@@ -400,7 +414,9 @@ public class CardUtil {
 			if (card == joker) {
 				jokerCount++;
 				if (jokerCount >= 2) {
-					return true;
+					cr.setWin(true);
+					cr.setKeepCards(new byte[] { 0, 1, 2, 3, 4 });
+					return cr;
 				}
 				continue;
 			}
@@ -411,7 +427,9 @@ public class CardUtil {
 			} else {
 				count++;
 				if (count + jokerCount >= 3) {
-					return true;
+					cr.setWin(true);
+					cr.setKeepCards(new byte[] { 0, 1, 2, 3, 4 });
+					return cr;
 				}
 			}
 			countMap.put(cardValue, count);
@@ -420,13 +438,15 @@ public class CardUtil {
 		for (int key : countMap.keySet()) {
 			count = countMap.get(key);
 			if (count + jokerCount >= 3) {
-				return true;
+				cr.setWin(true);
+				cr.setKeepCards(new byte[] { 0, 1, 2, 3, 4 });
+				return cr;
 			}
 		}
-		return false;
+		return cr;
 	}
 
-	public static boolean straight(byte[] cards) {
+	public static CardResult straight(byte[] cards, CardResult cr) {
 		byte[] sortedCards = new byte[5];
 		int cardValue = 0;
 		byte card = 0;
@@ -440,7 +460,7 @@ public class CardUtil {
 			card = cards[i];
 			if (card != joker) {
 				cardValue = getCardValue(card);
-				if (cardValue > maxValue){
+				if (cardValue > maxValue) {
 					maxValue = cardValue;
 				}
 				if (cardValue == 1) {
@@ -454,11 +474,13 @@ public class CardUtil {
 			} else {
 				jokerCount++;
 				if (jokerCount >= 4) {
-					return true;
+					cr.setWin(true);
+					cr.setKeepCards(new byte[] { 0, 1, 2, 3, 4 });
+					return cr;
 				}
 			}
 		}
-		if (maxValue <= 5 && isA){
+		if (maxValue <= 5 && isA) {
 			sortedCards[aIndex] = 1;
 		}
 		Arrays.sort(sortedCards);
@@ -468,17 +490,19 @@ public class CardUtil {
 				if (b >= 0) {
 					gapArray += b;
 				} else {
-					return false;
+					return cr;
 				}
 			}
 		}
 		if (gapArray <= jokerCount || sum / 5 == 0) {
-			return true;
+			cr.setWin(true);
+			cr.setKeepCards(new byte[] { 0, 1, 2, 3, 4 });
+			return cr;
 		}
-		return false;
+		return cr;
 	}
 
-	public static boolean flush(byte[] cards) {
+	public static CardResult flush(byte[] cards, CardResult cr) {
 		byte cardColor = 0, card = 0, jokerCount = 0;
 		Map<Byte, Byte> cardColorCountMap = new HashMap<Byte, Byte>(5);
 		for (int i = 0; i < cards.length; i++) {
@@ -497,18 +521,20 @@ public class CardUtil {
 		}
 		for (byte key : cardColorCountMap.keySet()) {
 			if (cardColorCountMap.get(key) + jokerCount >= 5) {
-				return true;
+				cr.setWin(true);
+				cr.setKeepCards(new byte[] { 0, 1, 2, 3, 4 });
+				return cr;
 			}
 		}
-		return false;
+		return cr;
 	}
 
-	public static boolean fullHouse(byte[] cards) {
+	public static CardResult fullHouse(byte[] cards, CardResult cr) {
 		byte cardValue = 0, card = 0;
 		Map<Byte, Byte> cardValueCountMap = new HashMap<Byte, Byte>(5);
 		for (int i = 0; i < cards.length; i++) {
 			if (cardValueCountMap.size() > 2) {
-				return false;
+				return cr;
 			}
 			card = cards[i];
 			if (card == joker) {
@@ -524,12 +550,14 @@ public class CardUtil {
 			cardValueCountMap.put(cardValue, count);
 		}
 		if (cardValueCountMap.size() == 2) {
-			return true;
+			cr.setWin(true);
+			cr.setKeepCards(new byte[] { 0, 1, 2, 3, 4 });
+			return cr;
 		}
-		return false;
+		return cr;
 	}
 
-	public static boolean fourOfAKindTwoTen(byte[] cards) {
+	public static CardResult fourOfAKindTwoTen(byte[] cards, CardResult cr) {
 		byte cardValue = 0, card = 0, jokerCount = 0;
 		Map<Byte, Byte> cardValueCountMap = new HashMap<Byte, Byte>(5);
 		Byte count = 0;
@@ -538,7 +566,9 @@ public class CardUtil {
 			if (card == joker) {
 				jokerCount++;
 				if (count + jokerCount >= 4) {
-					return true;
+					cr.setWin(true);
+					cr.setKeepCards(new byte[] { 0, 1, 2, 3, 4 });
+					return cr;
 				}
 				continue;
 			}
@@ -551,15 +581,17 @@ public class CardUtil {
 					count++;
 				}
 				if (count + jokerCount >= 4) {
-					return true;
+					cr.setWin(true);
+					cr.setKeepCards(new byte[] { 0, 1, 2, 3, 4 });
+					return cr;
 				}
 				cardValueCountMap.put(cardValue, count);
 			}
 		}
-		return false;
+		return cr;
 	}
 
-	public static boolean fourOfAKindJA(byte[] cards) {
+	public static CardResult fourOfAKindJA(byte[] cards, CardResult cr) {
 		byte cardValue = 0, card = 0, jokerCount = 0;
 		Map<Byte, Byte> cardValueCountMap = new HashMap<Byte, Byte>(5);
 		Byte count = 0;
@@ -568,7 +600,9 @@ public class CardUtil {
 			if (card == joker) {
 				jokerCount++;
 				if (count + jokerCount >= 4) {
-					return true;
+					cr.setWin(true);
+					cr.setKeepCards(new byte[] { 0, 1, 2, 3, 4 });
+					return cr;
 				}
 				continue;
 			}
@@ -581,15 +615,17 @@ public class CardUtil {
 					count++;
 				}
 				if (count + jokerCount >= 4) {
-					return true;
+					cr.setWin(true);
+					cr.setKeepCards(new byte[] { 0, 1, 2, 3, 4 });
+					return cr;
 				}
 				cardValueCountMap.put(cardValue, count);
 			}
 		}
-		return false;
+		return cr;
 	}
 
-	public static boolean straightFlush(byte[] cards) {
+	public static CardResult straightFlush(byte[] cards, CardResult cr) {
 		byte[] sortedCards = new byte[5];
 		int cardValue = 0;
 		byte card = 0;
@@ -604,7 +640,7 @@ public class CardUtil {
 					cardColor = getCardColor(card);
 				} else {
 					if (cardColor != getCardColor(card)) {
-						return false;
+						return cr;
 					}
 				}
 				cardValue = getCardValue(card);
@@ -616,7 +652,9 @@ public class CardUtil {
 			} else {
 				jokerCount++;
 				if (jokerCount >= 4) {
-					return true;
+					cr.setWin(true);
+					cr.setKeepCards(new byte[] { 0, 1, 2, 3, 4 });
+					return cr;
 				}
 			}
 		}
@@ -630,7 +668,9 @@ public class CardUtil {
 			}
 		}
 		if (gapArray <= jokerCount) {
-			return true;
+			cr.setWin(true);
+			cr.setKeepCards(new byte[] { 0, 1, 2, 3, 4 });
+			return cr;
 		}
 		for (int i = 0, j = sortedCards.length - 1; i < sortedCards.length
 				&& j > 0; i++, j--) {
@@ -638,21 +678,26 @@ public class CardUtil {
 			sum += cardValue;
 		}
 		if (sum / 5 == 0) {
-			return true;
+			cr.setWin(true);
+			cr.setKeepCards(new byte[] { 0, 1, 2, 3, 4 });
+			return cr;
 		}
-		return false;
+		return cr;
 	}
 
-	public static boolean fiveOfAKind(byte[] cards) {
+	public static CardResult fiveOfAKind(byte[] cards, CardResult cr) {
 		byte cardValue = 0, card = 0, jokerCount = 0;
 		Map<Byte, Byte> cardValueCountMap = new HashMap<Byte, Byte>(5);
 		Byte count = 0;
+		List<Byte> keepList = new ArrayList<Byte>();
 		for (int i = 0; i < cards.length; i++) {
 			card = cards[i];
 			if (card == joker) {
 				jokerCount++;
 				if (count + jokerCount >= 5) {
-					return true;
+					cr.setWin(true);
+					cr.setKeepCards(new byte[] { 0, 1, 2, 3, 4 });
+					return cr;
 				}
 				continue;
 			}
@@ -664,14 +709,16 @@ public class CardUtil {
 				count++;
 			}
 			if (count + jokerCount >= 5) {
-				return true;
+				cr.setWin(true);
+				cr.setKeepCards(new byte[] { 0, 1, 2, 3, 4 });
+				return cr;
 			}
 			cardValueCountMap.put(cardValue, count);
 		}
-		return false;
+		return cr;
 	}
 
-	public static boolean royalFlush(byte[] cards) {
+	public static CardResult royalFlush(byte[] cards, CardResult cr) {
 		byte[] sortedCards = new byte[5];
 		int cardValue = 0;
 		byte card = 0;
@@ -679,6 +726,7 @@ public class CardUtil {
 		int jokerCount = 0;
 		byte gapArray = 0;
 		int cardColor = 0;
+		List<Byte> keepList = new ArrayList<Byte>();
 		for (int i = 0; i < cards.length; i++) {
 			card = cards[i];
 			if (card != joker) {
@@ -686,7 +734,7 @@ public class CardUtil {
 					cardColor = getCardColor(card);
 				} else {
 					if (cardColor != getCardColor(card)) {
-						return false;
+						return cr;
 					}
 				}
 				cardValue = getCardValue(card);
@@ -695,13 +743,17 @@ public class CardUtil {
 				} else if (cardValue >= 10) {
 					sortedCards[i] = (byte) cardValue;
 				} else {
-					return false;
+					return cr;
 				}
 				sum += cardValue;
 			} else {
 				jokerCount++;
+				keepList.add((byte) i);
 				if (jokerCount >= 4) {
-					return true;
+					cr.setWin(true);
+					cr.setKeepCards(ArrayUtils.toPrimitive((Byte[]) keepList
+							.toArray()));
+					return cr;
 				}
 			}
 		}
@@ -715,21 +767,25 @@ public class CardUtil {
 			}
 		}
 		if (gapArray <= jokerCount || sum / 5 == 0) {
-			return true;
+			cr.setWin(true);
+			cr.setKeepCards(new byte[] { 0, 1, 2, 3, 4 });
+			return cr;
 		}
-		return false;
+		return cr;
 	}
 
-	public static boolean fiveBars(byte[] cards) {
+	public static CardResult fiveBars(byte[] cards, CardResult cr) {
 		for (int i = 0; i < cards.length; i++) {
 			if (cards[i] != CardUtil.cards.length) {
-				return false;
+				return cr;
 			}
 		}
-		return true;
+		cr.setWin(true);
+		cr.setKeepCards(new byte[] { 0, 1, 2, 3, 4 });
+		return cr;
 	}
 
-	public static boolean fourFlush(byte[] cards) {
+	public static CardResult fourFlush(byte[] cards, CardResult cr) {
 		byte cardColor = 0, card = 0, jokerCount = 0;
 		Map<Byte, Byte> cardColorCountMap = new HashMap<Byte, Byte>(5);
 		for (int i = 0; i < cards.length; i++) {
@@ -748,13 +804,15 @@ public class CardUtil {
 		}
 		for (byte key : cardColorCountMap.keySet()) {
 			if (cardColorCountMap.get(key) + jokerCount >= 4) {
-				return true;
+				cr.setWin(true);
+				cr.setKeepCards(new byte[] { 0, 1, 2, 3, 4 });
+				return cr;
 			}
 		}
-		return false;
+		return cr;
 	}
 
-	public static boolean fourStraight(byte[] cards) {
+	public static CardResult fourStraight(byte[] cards, CardResult cr) {
 		byte[] sortedCards = new byte[5];
 		int cardValue = 0;
 		byte card = 0;
@@ -772,7 +830,9 @@ public class CardUtil {
 			} else {
 				jokerCount++;
 				if (jokerCount >= 3) {
-					return true;
+					cr.setWin(true);
+					cr.setKeepCards(new byte[] { 0, 1, 2, 3, 4 });
+					return cr;
 				}
 			}
 		}
@@ -783,14 +843,28 @@ public class CardUtil {
 				if (b == 0) {
 					continueCount++;
 					if (continueCount + 1 + jokerCount >= 4) {
-						return true;
+						cr.setWin(true);
+						cr.setKeepCards(new byte[] { 0, 1, 2, 3, 4 });
+						return cr;
 					}
 				} else {
 					continueCount = 0;
 				}
 			}
 		}
-		return false;
+		return cr;
 	}
 
+	public static boolean orginalRoyalFlush(byte[] cards) {
+		int card = 0, cardValue = 0, sum = 0;
+		for (int i = 0; i < cards.length; i++) {
+			card = cards[i];
+			cardValue = getCardValue(card);
+			sum += cardValue;
+		}
+		if (sum == 47) {
+			return true;
+		}
+		return false;
+	}
 }

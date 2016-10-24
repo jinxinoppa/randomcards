@@ -26,6 +26,7 @@ public class RandomCardTest {
 		jf.add(northJP, BorderLayout.NORTH);
 		jf.add(new JScrollPane(cta), BorderLayout.CENTER);
 		JLabel countJL = new JLabel("次数");
+		final CardUtil cu = new CardUtil();
 		final JTextField countjtf = new JTextField(10);
 		countjtf.addKeyListener(new KeyListener() {
 			
@@ -36,8 +37,7 @@ public class RandomCardTest {
 			public void keyReleased(KeyEvent e) {
 				if(e.getKeyCode() == KeyEvent.VK_ENTER){
 					cta.setText("");
-					CardUtil cu = new CardUtil();
-					cu.test(countjtf.getText());
+					cu.printAndExcel(countjtf.getText());
 		        }
 			}
 			
@@ -49,8 +49,7 @@ public class RandomCardTest {
 			
 			public void actionPerformed(ActionEvent e) {
 				cta.setText("");
-				CardUtil cu = new CardUtil();
-				cu.test(countjtf.getText());
+				cu.printAndExcel(countjtf.getText());
 			}
 		});
 		northJP.add(countJL);
@@ -62,6 +61,5 @@ public class RandomCardTest {
 		jf.setVisible(true);
 		jf.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		jf.setLocationRelativeTo(null);
-		//cardutils-0.0.1-SNAPSHOT.jar
 	}
 }
