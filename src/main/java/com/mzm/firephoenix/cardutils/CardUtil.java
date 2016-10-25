@@ -11,7 +11,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.RandomUtils;
 import org.apache.poi.xssf.usermodel.XSSFCell;
@@ -526,8 +525,8 @@ public class CardUtil {
 			if (firstCardValue >= 7 || firstCardValue == 1) {
 				keepList.add((byte) i);
 				if (hasJoker) {
-					cr.setAfterWin(true, ArrayUtils
-							.toPrimitive(keepList.toArray(new Byte[keepList.size()])));
+					cr.setAfterWin(true, ArrayUtils.toPrimitive(keepList
+							.toArray(new Byte[keepList.size()])));
 					return cr;
 				}
 				for (int j = i + 1; j < cards.length; j++) {
@@ -535,16 +534,18 @@ public class CardUtil {
 					if (card == joker) {
 						keepList.add((byte) j);
 						hasJoker = true;
-						cr.setAfterWin(true, ArrayUtils
-								.toPrimitive(keepList.toArray(new Byte[keepList.size()])));
+						cr.setAfterWin(true, ArrayUtils.toPrimitive(keepList
+								.toArray(new Byte[keepList.size()])));
 						return cr;
 					}
 					secondCardValue = getCardValue(card);
 					if (secondCardValue >= 7 || secondCardValue == 1) {
 						if (hasJoker || firstCardValue == secondCardValue) {
 							keepList.add((byte) j);
-							cr.setAfterWin(true, ArrayUtils
-									.toPrimitive(keepList.toArray(new Byte[keepList.size()])));
+							cr.setAfterWin(
+									true,
+									ArrayUtils.toPrimitive(keepList
+											.toArray(new Byte[keepList.size()])));
 							return cr;
 						}
 					}
@@ -579,30 +580,30 @@ public class CardUtil {
 			}
 		}
 		if (count >= 2) {
-			cr.setAfterWin(true, ArrayUtils
-					.toPrimitive(keepList.toArray(new Byte[keepList.size()])));
+			cr.setAfterWin(true, ArrayUtils.toPrimitive(keepList
+					.toArray(new Byte[keepList.size()])));
 			return cr;
 		}
 		return cr;
 	}
 
 	public static void main(String[] args) {
-//		System.out.println(Arrays.toString(secondRandomCards(new byte[] { 23,
-//				1, 12, 39, 11 }, new byte[] { 2, 3 })));
-		List<Integer> list = new ArrayList<Integer>();
-		list.add(1);
-		list.add(3);
-		list.add(2);
-		Object[] o = list.toArray();
-		for (int i = 0; i < o.length; i++) {
-			System.out.println(o[i] instanceof Object);
-			System.out.println((Integer)o[i]);
-		}
-		int[] iArr = new int[0];
-		Integer[] b = list.toArray(new Integer[0]);
-		for (int i = 0; i < b.length; i++) {
-			System.out.println(b[i]);
-		}
+		// System.out.println(Arrays.toString(secondRandomCards(new byte[] { 23,
+		// 1, 12, 39, 11 }, new byte[] { 2, 3 })));
+//		List<Integer> list = new ArrayList<Integer>();
+//		list.add(1);
+//		list.add(3);
+//		list.add(2);
+//		Object[] o = list.toArray();
+//		for (int i = 0; i < o.length; i++) {
+//			System.out.println(o[i] instanceof Object);
+//			System.out.println((Integer) o[i]);
+//		}
+//		int[] iArr = new int[0];
+//		Integer[] b = list.toArray(new Integer[0]);
+//		for (int i = 0; i < b.length; i++) {
+//			System.out.println(b[i]);
+//		}
 	}
 
 	public static CardResult threeOfAKind(byte[] cards, CardResult cr) {
@@ -618,8 +619,8 @@ public class CardUtil {
 				jokerCount++;
 				keepList.add((byte) i);
 				if (jokerCount >= 2) {
-					cr.setAfterWin(true, ArrayUtils
-							.toPrimitive(keepList.toArray(new Byte[keepList.size()])));
+					cr.setAfterWin(true, ArrayUtils.toPrimitive(keepList
+							.toArray(new Byte[keepList.size()])));
 					return cr;
 				}
 				continue;
@@ -630,19 +631,19 @@ public class CardUtil {
 				count = 1;
 			} else {
 				count++;
-				
+
 			}
 			countMap.put(cardValue, count);
 			keepCardList = keepCardMap.get(cardValue);
 			if (keepCardList == null) {
 				keepCardList = new ArrayList<Byte>();
-				keepCardMap.put((byte)cardValue, keepCardList);
+				keepCardMap.put((byte) cardValue, keepCardList);
 			}
 			keepCardList.add((byte) i);
 			if (count + jokerCount >= 3) {
 				keepList.addAll(keepCardList);
-				cr.setAfterWin(true, ArrayUtils
-						.toPrimitive(keepList.toArray(new Byte[keepList.size()])));
+				cr.setAfterWin(true, ArrayUtils.toPrimitive(keepList
+						.toArray(new Byte[keepList.size()])));
 				return cr;
 			}
 		}
@@ -651,8 +652,8 @@ public class CardUtil {
 			count = countMap.get(key);
 			if (count + jokerCount >= 3) {
 				keepList.addAll(keepCardList);
-				cr.setAfterWin(true, ArrayUtils
-						.toPrimitive(keepList.toArray(new Byte[keepList.size()])));
+				cr.setAfterWin(true, ArrayUtils.toPrimitive(keepList
+						.toArray(new Byte[keepList.size()])));
 				return cr;
 			}
 		}
@@ -684,8 +685,8 @@ public class CardUtil {
 				jokerCount++;
 				keepList.add((byte) i);
 				if (jokerCount >= 4) {
-					cr.setAfterWin(true, ArrayUtils
-							.toPrimitive(keepList.toArray(new Byte[keepList.size()])));
+					cr.setAfterWin(true, ArrayUtils.toPrimitive(keepList
+							.toArray(new Byte[keepList.size()])));
 					return cr;
 				}
 				sortedCards[i] = (byte) cardValue;
@@ -707,10 +708,10 @@ public class CardUtil {
 			}
 		}
 		if (gapArray <= jokerCount) {
-			cr.setAfterWin(true, ArrayUtils
-					.toPrimitive(keepList.toArray(new Byte[keepList.size()])));
+			cr.setAfterWin(true, ArrayUtils.toPrimitive(keepList
+					.toArray(new Byte[keepList.size()])));
 			return cr;
-		} else if (sum / 5 == 0){
+		} else if (sum / 5 == 0) {
 			cr.setAfterWin(true, new byte[] { 0, 1, 2, 3, 4 });
 		}
 		return cr;
@@ -719,7 +720,9 @@ public class CardUtil {
 	public static CardResult flush(byte[] cards, CardResult cr) {
 		byte cardColor = 0, card = 0, jokerCount = 0;
 		Map<Byte, Byte> cardColorCountMap = new HashMap<Byte, Byte>(5);
+		Map<Byte, List<Byte>> keepCardMap = new HashMap<Byte, List<Byte>>(5);
 		List<Byte> keepList = new ArrayList<Byte>();
+		List<Byte> keepCardList = null;
 		for (int i = 0; i < cards.length; i++) {
 			card = cards[i];
 			if (card == joker) {
@@ -735,11 +738,18 @@ public class CardUtil {
 				count++;
 			}
 			cardColorCountMap.put(cardColor, count);
+			keepCardList = keepCardMap.get(cardColor);
+			if (keepCardList == null) {
+				keepCardList = new ArrayList<Byte>();
+				keepCardMap.put(cardColor, keepCardList);
+			}
+			keepCardList.add((byte) i);
 		}
 		for (byte key : cardColorCountMap.keySet()) {
 			if (cardColorCountMap.get(key) + jokerCount >= 5) {
-				cr.setWin(true);
-				cr.setKeepCards(new byte[] { 0, 1, 2, 3, 4 });
+				keepList.addAll(keepCardList);
+				cr.setAfterWin(true, ArrayUtils.toPrimitive(keepList
+						.toArray(new Byte[keepList.size()])));
 				return cr;
 			}
 		}
@@ -767,8 +777,7 @@ public class CardUtil {
 			cardValueCountMap.put(cardValue, count);
 		}
 		if (cardValueCountMap.size() == 2) {
-			cr.setWin(true);
-			cr.setKeepCards(new byte[] { 0, 1, 2, 3, 4 });
+			cr.setAfterWin(true, new byte[] { 0, 1, 2, 3, 4 });
 			return cr;
 		}
 		return cr;
@@ -778,13 +787,17 @@ public class CardUtil {
 		byte cardValue = 0, card = 0, jokerCount = 0;
 		Map<Byte, Byte> cardValueCountMap = new HashMap<Byte, Byte>(5);
 		Byte count = 0;
+		List<Byte> keepList = new ArrayList<Byte>();
+		Map<Byte, List<Byte>> keepCardMap = new HashMap<Byte, List<Byte>>(5);
+		List<Byte> keepCardList = null;
 		for (int i = 0; i < cards.length; i++) {
 			card = cards[i];
 			if (card == joker) {
 				jokerCount++;
+				keepList.add((byte) i);
 				if (count + jokerCount >= 4) {
-					cr.setWin(true);
-					cr.setKeepCards(new byte[] { 0, 1, 2, 3, 4 });
+					cr.setAfterWin(true, ArrayUtils.toPrimitive(keepList
+							.toArray(new Byte[keepList.size()])));
 					return cr;
 				}
 				continue;
@@ -797,9 +810,16 @@ public class CardUtil {
 				} else {
 					count++;
 				}
+				keepCardList = keepCardMap.get(cardValue);
+				if (keepCardList == null) {
+					keepCardList = new ArrayList<Byte>();
+					keepCardMap.put(cardValue, keepCardList);
+				}
+				keepCardList.add((byte) i);
 				if (count + jokerCount >= 4) {
-					cr.setWin(true);
-					cr.setKeepCards(new byte[] { 0, 1, 2, 3, 4 });
+					keepList.addAll(keepCardList);
+					cr.setAfterWin(true, ArrayUtils.toPrimitive(keepList
+							.toArray(new Byte[keepList.size()])));
 					return cr;
 				}
 				cardValueCountMap.put(cardValue, count);
@@ -812,13 +832,17 @@ public class CardUtil {
 		byte cardValue = 0, card = 0, jokerCount = 0;
 		Map<Byte, Byte> cardValueCountMap = new HashMap<Byte, Byte>(5);
 		Byte count = 0;
+		List<Byte> keepList = new ArrayList<Byte>();
+		Map<Byte, List<Byte>> keepCardMap = new HashMap<Byte, List<Byte>>(5);
+		List<Byte> keepCardList = null;
 		for (int i = 0; i < cards.length; i++) {
 			card = cards[i];
 			if (card == joker) {
 				jokerCount++;
+				keepList.add((byte) i);
 				if (count + jokerCount >= 4) {
-					cr.setWin(true);
-					cr.setKeepCards(new byte[] { 0, 1, 2, 3, 4 });
+					cr.setAfterWin(true, ArrayUtils.toPrimitive(keepList
+							.toArray(new Byte[keepList.size()])));
 					return cr;
 				}
 				continue;
@@ -831,9 +855,16 @@ public class CardUtil {
 				} else {
 					count++;
 				}
+				keepCardList = keepCardMap.get(cardValue);
+				if (keepCardList == null) {
+					keepCardList = new ArrayList<Byte>();
+					keepCardMap.put(cardValue, keepCardList);
+				}
+				keepCardList.add((byte) i);
 				if (count + jokerCount >= 4) {
-					cr.setWin(true);
-					cr.setKeepCards(new byte[] { 0, 1, 2, 3, 4 });
+					keepList.addAll(keepCardList);
+					cr.setAfterWin(true, ArrayUtils.toPrimitive(keepList
+							.toArray(new Byte[keepList.size()])));
 					return cr;
 				}
 				cardValueCountMap.put(cardValue, count);
@@ -844,12 +875,10 @@ public class CardUtil {
 
 	public static CardResult straightFlush(byte[] cards, CardResult cr) {
 		byte[] sortedCards = new byte[5];
-		int cardValue = 0;
-		byte card = 0;
-		int sum = 0;
-		int jokerCount = 0;
-		byte gapArray = 0;
-		int cardColor = 0;
+		int cardValue = 0, sum = 0, jokerCount = 0, cardColor = 0, aIndex = 0, maxValue = 0;
+		byte card = 0, gapArray = 0;
+		boolean isA = false;
+		List<Byte> keepList = new ArrayList<Byte>();
 		for (int i = 0; i < cards.length; i++) {
 			card = cards[i];
 			if (card != joker) {
@@ -861,42 +890,50 @@ public class CardUtil {
 					}
 				}
 				cardValue = getCardValue(card);
+				if (cardValue > maxValue) {
+					maxValue = cardValue;
+				}
 				if (cardValue == 1) {
 					sortedCards[i] = 14;
+					isA = true;
+					aIndex = i;
+					sum += 14;
 				} else {
 					sortedCards[i] = (byte) cardValue;
+					sum += cardValue;
 				}
+
 			} else {
 				jokerCount++;
+				keepList.add((byte) i);
 				if (jokerCount >= 4) {
-					cr.setWin(true);
-					cr.setKeepCards(new byte[] { 0, 1, 2, 3, 4 });
+					cr.setAfterWin(true, ArrayUtils.toPrimitive(keepList
+							.toArray(new Byte[keepList.size()])));
 					return cr;
 				}
+				sortedCards[i] = (byte) cardValue;
 			}
+		}
+		if (maxValue <= 5 && isA) {
+			sortedCards[aIndex] = 1;
 		}
 		Arrays.sort(sortedCards);
 		for (int i = sortedCards.length - 1; i > 0; i--) {
-			if (sortedCards[i - 1] != 0) {
+			if (sortedCards[i] != joker && sortedCards[i - 1] != 0) {
 				byte b = (byte) (sortedCards[i] - sortedCards[i - 1] - 1);
 				if (b > 0) {
 					gapArray += b;
+					keepList.add((byte) i);
 				}
 			}
 		}
 		if (gapArray <= jokerCount) {
-			cr.setWin(true);
-			cr.setKeepCards(new byte[] { 0, 1, 2, 3, 4 });
+			cr.setAfterWin(true, ArrayUtils.toPrimitive(keepList
+					.toArray(new Byte[keepList.size()])));
 			return cr;
 		}
-		for (int i = 0, j = sortedCards.length - 1; i < sortedCards.length
-				&& j > 0; i++, j--) {
-			cardValue = sortedCards[i];
-			sum += cardValue;
-		}
 		if (sum / 5 == 0) {
-			cr.setWin(true);
-			cr.setKeepCards(new byte[] { 0, 1, 2, 3, 4 });
+			cr.setAfterWin(true, new byte[] { 0, 1, 2, 3, 4 });
 			return cr;
 		}
 		return cr;
@@ -906,14 +943,17 @@ public class CardUtil {
 		byte cardValue = 0, card = 0, jokerCount = 0;
 		Map<Byte, Byte> cardValueCountMap = new HashMap<Byte, Byte>(5);
 		Byte count = 0;
+		Map<Byte, List<Byte>> keepCardMap = new HashMap<Byte, List<Byte>>(5);
 		List<Byte> keepList = new ArrayList<Byte>();
+		List<Byte> keepCardList = null;
 		for (int i = 0; i < cards.length; i++) {
 			card = cards[i];
 			if (card == joker) {
 				jokerCount++;
+				keepList.add((byte) i);
 				if (count + jokerCount >= 5) {
-					cr.setWin(true);
-					cr.setKeepCards(new byte[] { 0, 1, 2, 3, 4 });
+					cr.setAfterWin(true, ArrayUtils.toPrimitive(keepList
+							.toArray(new Byte[keepList.size()])));
 					return cr;
 				}
 				continue;
@@ -925,9 +965,16 @@ public class CardUtil {
 			} else {
 				count++;
 			}
+			keepCardList = keepCardMap.get(cardValue);
+			if (keepCardList == null) {
+				keepCardList = new ArrayList<Byte>();
+				keepCardMap.put(cardValue, keepCardList);
+			}
+			keepCardList.add((byte) i);
 			if (count + jokerCount >= 5) {
-				cr.setWin(true);
-				cr.setKeepCards(new byte[] { 0, 1, 2, 3, 4 });
+				keepList.addAll(keepCardList);
+				cr.setAfterWin(true, ArrayUtils.toPrimitive(keepList
+						.toArray(new Byte[keepList.size()])));
 				return cr;
 			}
 			cardValueCountMap.put(cardValue, count);
@@ -937,12 +984,8 @@ public class CardUtil {
 
 	public static CardResult royalFlush(byte[] cards, CardResult cr) {
 		byte[] sortedCards = new byte[5];
-		int cardValue = 0;
-		byte card = 0;
-		int sum = 0;
-		int jokerCount = 0;
-		byte gapArray = 0;
-		int cardColor = 0;
+		int cardValue = 0, sum = 0, jokerCount = 0, cardColor = 0;
+		byte card = 0, gapArray = 0;
 		List<Byte> keepList = new ArrayList<Byte>();
 		for (int i = 0; i < cards.length; i++) {
 			card = cards[i];
@@ -967,25 +1010,29 @@ public class CardUtil {
 				jokerCount++;
 				keepList.add((byte) i);
 				if (jokerCount >= 4) {
-					cr.setAfterWin(true, ArrayUtils
-							.toPrimitive(keepList.toArray(new Byte[keepList.size()])));
+					cr.setAfterWin(true, ArrayUtils.toPrimitive(keepList
+							.toArray(new Byte[keepList.size()])));
 					return cr;
 				}
+				sortedCards[i] = card;
 			}
 		}
 		Arrays.sort(sortedCards);
 		for (int i = sortedCards.length - 1; i > 0; i--) {
-			if (sortedCards[i - 1] != 0) {
+			if (sortedCards[i] != joker && sortedCards[i - 1] != 0) {
 				byte b = (byte) (sortedCards[i] - sortedCards[i - 1] - 1);
 				if (b > 0) {
 					gapArray += b;
+					keepList.add((byte) i);
 				}
 			}
 		}
-		if (gapArray <= jokerCount || sum / 5 == 0) {
-			cr.setWin(true);
-			cr.setKeepCards(new byte[] { 0, 1, 2, 3, 4 });
+		if (gapArray <= jokerCount) {
+			cr.setAfterWin(true, ArrayUtils.toPrimitive(keepList
+					.toArray(new Byte[keepList.size()])));
 			return cr;
+		} else if (sum / 5 == 0) {
+			cr.setAfterWin(true, new byte[] { 0, 1, 2, 3, 4 });
 		}
 		return cr;
 	}
@@ -996,8 +1043,7 @@ public class CardUtil {
 				return cr;
 			}
 		}
-		cr.setWin(true);
-		cr.setKeepCards(new byte[] { 0, 1, 2, 3, 4 });
+		cr.setAfterWin(true, new byte[] { 0, 1, 2, 3, 4 });
 		return cr;
 	}
 
@@ -1033,8 +1079,8 @@ public class CardUtil {
 			if (cardColorCountMap.get(key) + jokerCount >= 4) {
 				keepCardList = keepCardMap.get(key);
 				keepList.addAll(keepCardList);
-				cr.setAfterWin(true, ArrayUtils
-						.toPrimitive(keepList.toArray(new Byte[keepList.size()])));
+				cr.setAfterWin(true, ArrayUtils.toPrimitive(keepList
+						.toArray(new Byte[keepList.size()])));
 				return cr;
 			}
 		}
@@ -1061,8 +1107,8 @@ public class CardUtil {
 				jokerCount++;
 				keepList.add((byte) i);
 				if (jokerCount >= 3) {
-					cr.setAfterWin(true, ArrayUtils
-							.toPrimitive(keepList.toArray(new Byte[keepList.size()])));
+					cr.setAfterWin(true, ArrayUtils.toPrimitive(keepList
+							.toArray(new Byte[keepList.size()])));
 					return cr;
 				}
 				sortedCards[i] = card;
@@ -1076,8 +1122,8 @@ public class CardUtil {
 					continueCount++;
 					keepList.add((byte) i);
 					if (continueCount + 1 + jokerCount >= 4) {
-						cr.setAfterWin(true, ArrayUtils
-								.toPrimitive(keepList.toArray(new Byte[keepList.size()])));
+						cr.setAfterWin(true, ArrayUtils.toPrimitive(keepList
+								.toArray(new Byte[keepList.size()])));
 						return cr;
 					}
 				} else {
