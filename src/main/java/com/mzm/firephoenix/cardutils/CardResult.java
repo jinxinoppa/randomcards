@@ -35,6 +35,11 @@ public class CardResult {
 	}
 
 	public void setKeepCards(byte[] keepCards) {
+//		this.keepCards = keepCards;
+	}
+
+	public void setAfterWin(boolean win, byte[] keepCards) {
+		this.win = win;
 		this.keepCards = keepCards;
 	}
 }

@@ -28,6 +28,7 @@ public class RandomCardTest {
 		JLabel countJL = new JLabel("次数");
 		final CardUtil cu = new CardUtil();
 		final JTextField countjtf = new JTextField(10);
+		countjtf.setText("10000");
 		countjtf.addKeyListener(new KeyListener() {
 			
 			public void keyTyped(KeyEvent e) {

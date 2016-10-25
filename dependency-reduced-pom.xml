@@ -4,7 +4,7 @@
   <groupId>com.mzm.firephoenix</groupId>
   <artifactId>RandomCards</artifactId>
   <name>cardutils</name>
-  <version>v1.0.1.161021_Jaguar</version>
+  <version>v1.0.3.161025_Jaguar</version>
   <url>http://maven.apache.org</url>
   <build>
     <plugins>
