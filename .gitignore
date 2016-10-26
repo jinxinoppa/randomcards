@@ -1,5 +1,5 @@
-.settings/
+﻿.settings/
 target/
 .classpath
 .project
-牌型检测.xls
+*.xls
