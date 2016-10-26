@@ -5,6 +5,8 @@ public class CardResult {
 	private boolean win = false;
 	private byte[] cards = null;
 	private byte[] keepCards = null;
+	private int physicalNumberOfRow;
+	// private byte[] sortedCards = null;
 
 	public byte getWinType() {
 		return winType;
@@ -41,5 +43,13 @@ public class CardResult {
 	public void setAfterWin(boolean win, byte[] keepCards) {
 		this.win = win;
 		this.keepCards = keepCards;
+	}
+
+	public int getPhysicalNumberOfRow() {
+		return physicalNumberOfRow;
+	}
+
+	public void setPhysicalNumberOfRow(int physicalNumberOfRow) {
+		this.physicalNumberOfRow = physicalNumberOfRow;
 	}
 }

@@ -38,7 +38,8 @@ public class RandomCardTest {
 			public void keyReleased(KeyEvent e) {
 				if(e.getKeyCode() == KeyEvent.VK_ENTER){
 					cta.setText("");
-					cu.printAndExcel(countjtf.getText());
+//					cu.printAndExcel(countjtf.getText());
+					cu.firstAndSecond(countjtf.getText());
 		        }
 			}
 			
@@ -50,7 +51,8 @@ public class RandomCardTest {
 			
 			public void actionPerformed(ActionEvent e) {
 				cta.setText("");
-				cu.printAndExcel(countjtf.getText());
+//				cu.printAndExcel(countjtf.getText());
+				cu.firstAndSecond(countjtf.getText());
 			}
 		});
 		northJP.add(countJL);
