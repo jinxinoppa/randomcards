@@ -179,7 +179,7 @@ public class CardUtil {
 
 		XSSFSheet sheet = null;
 		for (int i = 0; i < totalCount; i++) {
-			cardArray = firstRandomCards();
+			cardArray = firstRandomCards().getCards();
 			CardResult cr = new CardResult();
 			cr.setCards(cardArray);
 			if (fiveBars(cardArray, cr).isWin()) {
@@ -299,7 +299,7 @@ public class CardUtil {
 				}
 			}
 			//
-			cardArray = secondRandomCards(cr);
+			cardArray = secondRandomCards(cr).getCards();
 			if (fiveBars(cardArray, cr).isWin()) {
 				appendCards(cardArray, sheet, false, cr.getPhysicalNumberOfRow());
 			} else {
@@ -394,7 +394,7 @@ public class CardUtil {
 
 		List<CardResult> secondList = new ArrayList<CardResult>();
 		for (int i = 0; i < totalCount; i++) {
-			cardArray = firstRandomCards();
+			cardArray = firstRandomCards().getCards();
 			CardResult cr = new CardResult();
 			secondList.add(cr);
 			cr.setCards(cardArray);
@@ -510,7 +510,7 @@ public class CardUtil {
 		fourFlush = 0;
 		for (int i = 0; i < secondList.size(); i++) {
 			CardResult cr = secondList.get(i);
-			cardArray = secondRandomCards(cr);
+			cardArray = secondRandomCards(cr).getCards();
 			if (fiveBars(cardArray, cr).isWin()) {
 				fiveBars++;
 				// appendCards(cardArray, getHSSFSheet(workbook, "五鬼"), false,
@@ -635,15 +635,16 @@ public class CardUtil {
 		return b1.divide(b2, scale, BigDecimal.ROUND_HALF_UP).doubleValue() * 100;
 	}
 
-	public static byte[] firstRandomCards() {
+	public static CardResult firstRandomCards() {
 		int nextInt = 0;
 		boolean isRepeated = false;
 		// long startTime = System.currentTimeMillis();
-		byte[] cards = new byte[5];
-		for (int i = 0; i < cards.length; i++) {
+		byte[] cardArray = new byte[5];
+		CardResult cr = new CardResult();
+		for (int i = 0; i < cardArray.length; i++) {
 			nextInt = RandomUtils.nextInt(0, CardUtil.cards.length) + 1;
 			for (int j = 0; j < i; j++) {
-				if (nextInt != CardUtil.cards.length && cards[j] == nextInt) {
+				if (nextInt != CardUtil.cards.length && cardArray[j] == nextInt) {
 					isRepeated = true;
 					break;
 				}
@@ -653,12 +654,41 @@ public class CardUtil {
 				i--;
 				continue;
 			}
-			cards[i] = (byte) nextInt;
+			cardArray[i] = (byte) nextInt;
 		}
-		return cards;
+		cr.setCards(cardArray);
+
+		if (fiveBars(cardArray, cr).isWin()) {
+			cr.setWinType(1000);
+		} else if (royalFlush(cardArray, cr).isWin()) {
+			cr.setWinType(500);
+		} else if (fiveOfAKind(cardArray, cr).isWin()) {
+			cr.setWinType(250);
+		} else if (straightFlush(cardArray, cr).isWin()) {
+			cr.setWinType(120);
+		} else if (fourOfAKindJA(cardArray, cr).isWin()) {
+			cr.setWinType(80);
+		} else if (fourOfAKindTwoTen(cardArray, cr).isWin()) {
+			cr.setWinType(50);
+		} else if (fullHouse(cardArray, cr).isWin()) {
+			cr.setWinType(10);
+		} else if (flush(cardArray, cr).isWin()) {
+			cr.setWinType(7);
+		} else if (straight(cardArray, cr).isWin()) {
+			cr.setWinType(5);
+		} else if (threeOfAKind(cardArray, cr).isWin()) {
+			cr.setWinType(3);
+		} else if (twoPairs(cardArray, cr).isWin()) {
+			cr.setWinType(2);
+		} else if (sevenBetter(cardArray, cr).isWin()) {
+			cr.setWinType(1);
+		} else if (fourFlush(cardArray, cr).isWin()) {
+		} else if (fourStraight(cardArray, cr).isWin()) {
+		}
+		return cr;
 	}
 
-	public static byte[] secondRandomCards(CardResult cr) {
+	public static CardResult secondRandomCards(CardResult cr) {
 		int nextInt = 0, cardValue = 0, cardColor = 0, compareCardValue = 0, compareCardColor = 0;
 		boolean isRepeated = false;
 		boolean isKeep = false;
@@ -687,9 +717,9 @@ public class CardUtil {
 					cardValue = getCardValue(cards[j]);
 					if (nextInt != CardUtil.cards.length) {
 						if (cards[j] == nextInt
-								//cardColor == compareCardColor || 
-//								cardValue == compareCardValue
-								) {
+						// cardColor == compareCardColor ||
+						// cardValue == compareCardValue
+						) {
 							isRepeated = true;
 							break;
 						}
@@ -710,7 +740,7 @@ public class CardUtil {
 			}
 			cards[i] = (byte) nextInt;
 		}
-		return cards;
+		return cr;
 	}
 
 	public static CardResult sevenBetter(byte[] cards, CardResult cr) {
@@ -726,8 +756,8 @@ public class CardUtil {
 			}
 			firstCardValue = getCardValue(card);
 			if (firstCardValue >= 7 || firstCardValue == 1) {
-				keepList.add((byte) i);
 				if (hasJoker) {
+					keepList.add((byte) i);
 					cr.setAfterWin(true, ArrayUtils.toPrimitive(keepList.toArray(new Byte[keepList.size()])));
 					return cr;
 				}
@@ -742,6 +772,7 @@ public class CardUtil {
 					secondCardValue = getCardValue(card);
 					if (secondCardValue >= 7 || secondCardValue == 1) {
 						if (hasJoker || firstCardValue == secondCardValue) {
+							keepList.add((byte) i);
 							keepList.add((byte) j);
 							cr.setAfterWin(true, ArrayUtils.toPrimitive(keepList.toArray(new Byte[keepList.size()])));
 							return cr;
@@ -802,14 +833,14 @@ public class CardUtil {
 		// System.out.println(b[i]);
 		// }
 		CardResult cr = new CardResult();
-		// cr.setCards(new byte[]{30, 29, 28, 53, 31});
+		 cr.setCards(new byte[]{46, 18, 36, 2, 53});
 		// cr.setCards(new byte[]{2,3,3,5,6});
 		// cr.setCards(new byte[]{6, 2, 5, 2, 4});
 		// cr.setCards(new byte[]{4, 5, 7, 8, 9});
-		cr.setCards(new byte[]{2, 3, 4, 53, 53});
-		System.out.println(threeOfAKind(cr.getCards(), cr).isWin());
-		System.out.println(Arrays.toString(cr.getKeepCards()));
-		System.out.println(Arrays.toString(secondRandomCards(cr)));
+//		cr.setCards(new byte[]{2, 3, 4, 53, 53});
+		System.out.println(sevenBetter(cr.getCards(), cr).isWin());
+//		System.out.println(Arrays.toString(cr.getKeepCards()));
+//		System.out.println(Arrays.toString(secondRandomCards(cr).getCards()));
 	}
 
 	public static CardResult threeOfAKind(byte[] cards, CardResult cr) {
@@ -1426,5 +1457,10 @@ public class CardUtil {
 			return true;
 		}
 		return false;
+	}
+	
+	public static byte compareCard(){
+		int nextInt = RandomUtils.nextInt(1, CardUtil.cards.length);
+		return (byte) nextInt;
 	}
 }

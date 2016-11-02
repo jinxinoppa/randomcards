@@ -1,26 +1,26 @@
 package com.mzm.firephoenix.cardutils;
 
 public class CardResult {
-	private byte winType = 0;
+	private int winType = 0;
 	private boolean win = false;
 	private byte[] cards = null;
 	private byte[] keepCards = null;
 	private int physicalNumberOfRow;
 	// private byte[] sortedCards = null;
 
-	public byte getWinType() {
+	public int getWinType() {
 		return winType;
 	}
 
-	public void setWinType(byte winType) {
+	public void setWinType(int winType) {
 		this.winType = winType;
 	}
 
-	public boolean isWin() {
+	protected boolean isWin() {
 		return win;
 	}
 
-	public void setWin(boolean win) {
+	protected void setWin(boolean win) {
 		this.win = win;
 	}
 
@@ -45,11 +45,11 @@ public class CardResult {
 		this.keepCards = keepCards;
 	}
 
-	public int getPhysicalNumberOfRow() {
+	protected int getPhysicalNumberOfRow() {
 		return physicalNumberOfRow;
 	}
 
-	public void setPhysicalNumberOfRow(int physicalNumberOfRow) {
+	protected void setPhysicalNumberOfRow(int physicalNumberOfRow) {
 		this.physicalNumberOfRow = physicalNumberOfRow;
 	}
 }
