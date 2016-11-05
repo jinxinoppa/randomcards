@@ -7,6 +7,7 @@ public class CardResult {
 	private byte[] keepCards = null;
 	private int physicalNumberOfRow;
 	// private byte[] sortedCards = null;
+	private int score = 0;
 
 	public int getWinType() {
 		return winType;
@@ -51,5 +52,13 @@ public class CardResult {
 
 	protected void setPhysicalNumberOfRow(int physicalNumberOfRow) {
 		this.physicalNumberOfRow = physicalNumberOfRow;
+	}
+
+	public int getScore() {
+		return score;
+	}
+
+	public void setScore(int score) {
+		this.score = score;
 	}
 }

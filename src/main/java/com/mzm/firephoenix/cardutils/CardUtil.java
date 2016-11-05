@@ -689,6 +689,7 @@ public class CardUtil {
 	}
 
 	public static CardResult secondRandomCards(CardResult cr) {
+		cr.setWin(false);
 		int nextInt = 0, cardValue = 0, cardColor = 0, compareCardValue = 0, compareCardColor = 0;
 		boolean isRepeated = false;
 		boolean isKeep = false;
@@ -739,6 +740,34 @@ public class CardUtil {
 				continue;
 			}
 			cards[i] = (byte) nextInt;
+		}
+		
+		if (fiveBars(cards, cr).isWin()) {
+			cr.setWinType(1000);
+		} else if (royalFlush(cards, cr).isWin()) {
+			cr.setWinType(500);
+		} else if (fiveOfAKind(cards, cr).isWin()) {
+			cr.setWinType(250);
+		} else if (straightFlush(cards, cr).isWin()) {
+			cr.setWinType(120);
+		} else if (fourOfAKindJA(cards, cr).isWin()) {
+			cr.setWinType(80);
+		} else if (fourOfAKindTwoTen(cards, cr).isWin()) {
+			cr.setWinType(50);
+		} else if (fullHouse(cards, cr).isWin()) {
+			cr.setWinType(10);
+		} else if (flush(cards, cr).isWin()) {
+			cr.setWinType(7);
+		} else if (straight(cards, cr).isWin()) {
+			cr.setWinType(5);
+		} else if (threeOfAKind(cards, cr).isWin()) {
+			cr.setWinType(3);
+		} else if (twoPairs(cards, cr).isWin()) {
+			cr.setWinType(2);
+		} else if (sevenBetter(cards, cr).isWin()) {
+			cr.setWinType(1);
+		} else if (fourFlush(cards, cr).isWin()) {
+		} else if (fourStraight(cards, cr).isWin()) {
 		}
 		return cr;
 	}
