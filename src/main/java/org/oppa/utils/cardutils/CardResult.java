@@ -1,4 +1,4 @@
-package com.mzm.firephoenix.cardutils;
+package org.oppa.utils.cardutils;
 
 public class CardResult {
 	private int winType = 0;

@@ -1,4 +1,4 @@
-package com.mzm.firephoenix.cardutils;
+package org.oppa.utils.cardutils;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -915,12 +915,12 @@ public class CardUtil {
 		// }
 		CardResult cr = new CardResult();
 //		 cr.setCards(new byte[]{7,9,10,13,14});
-		cr.setCards(new byte[]{11,8,53,4,2});
+		cr.setCards(new byte[]{13, 1, 53, 53, 4});
 //		 cr.setCards(new byte[]{2, 9, 10, 12, 13});
 		// cr.setCards(new byte[]{6, 2, 5, 2, 4});
 		// cr.setCards(new byte[]{4, 5, 7, 8, 9});
 		// cr.setCards(new byte[]{2, 3, 4, 53, 53});
-		System.out.println(sevenBetterKeep(cr.getCards(), cr).isWin());
+		System.out.println(fourOfAKindTwoTen(cr.getCards(), cr).isWin());
 		// System.out.println(Arrays.toString(cr.getKeepCards()));
 		// System.out.println(Arrays.toString(secondRandomCards(cr).getCards()));
 	}

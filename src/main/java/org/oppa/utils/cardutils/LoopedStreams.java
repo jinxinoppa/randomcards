@@ -1,4 +1,4 @@
-package com.mzm.firephoenix.cardutils;
+package org.oppa.utils.cardutils;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
