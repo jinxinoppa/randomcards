@@ -2,34 +2,26 @@ package com.mzm.firephoenix.cardutils;
 
 public class CardResult {
 	private int winType = 0;
-	private boolean win = false;
+	private boolean isWin = false;
 	private byte[] cards = null;
 	private byte[] keepCards = null;
 	private int physicalNumberOfRow;
-	// private byte[] sortedCards = null;
-	private int score = 0;
+	private int bet = 0;
+	private int win = 0;
 
 	public int getWinType() {
 		return winType;
 	}
 
-	public void setWinType(int winType) {
+	void setWinType(int winType) {
 		this.winType = winType;
-	}
-
-	protected boolean isWin() {
-		return win;
-	}
-
-	protected void setWin(boolean win) {
-		this.win = win;
 	}
 
 	public byte[] getCards() {
 		return cards;
 	}
 
-	public void setCards(byte[] cards) {
+	void setCards(byte[] cards) {
 		this.cards = cards;
 	}
 
@@ -41,24 +33,40 @@ public class CardResult {
 		this.keepCards = keepCards;
 	}
 
-	public void setAfterWin(boolean win, byte[] keepCards) {
-		this.win = win;
+	void setAfterWin(boolean win, byte[] keepCards) {
+		this.isWin = win;
 		this.keepCards = keepCards;
 	}
 
-	protected int getPhysicalNumberOfRow() {
+	int getPhysicalNumberOfRow() {
 		return physicalNumberOfRow;
 	}
 
-	protected void setPhysicalNumberOfRow(int physicalNumberOfRow) {
+	void setPhysicalNumberOfRow(int physicalNumberOfRow) {
 		this.physicalNumberOfRow = physicalNumberOfRow;
 	}
 
-	public int getScore() {
-		return score;
+	boolean isWin() {
+		return isWin;
 	}
 
-	public void setScore(int score) {
-		this.score = score;
+	void setWin(boolean isWin) {
+		this.isWin = isWin;
+	}
+
+	public int getBet() {
+		return bet;
+	}
+
+	public void setBet(int bet) {
+		this.bet = bet;
+	}
+
+	public int getWin() {
+		return win;
+	}
+
+	public void setWin(int win) {
+		this.win = win;
 	}
 }
