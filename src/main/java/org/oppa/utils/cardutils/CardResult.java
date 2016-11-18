@@ -8,7 +8,17 @@ public class CardResult {
 	private int physicalNumberOfRow;
 	private int bet = 0;
 	private int win = 0;
+	private int winCount;
+	private int giftWin = 0;
 
+	
+	public void reset(){
+		setBet(0);
+		setWin(0);
+		setWinCount(0);
+		setGiftWin(0);
+	}
+	
 	public int getWinType() {
 		return winType;
 	}
@@ -68,5 +78,21 @@ public class CardResult {
 
 	public void setWin(int win) {
 		this.win = win;
+	}
+
+	public int getWinCount() {
+		return winCount;
+	}
+
+	public void setWinCount(int winCount) {
+		this.winCount = winCount;
+	}
+
+	public int getGiftWin() {
+		return giftWin;
+	}
+
+	public void setGiftWin(int giftWin) {
+		this.giftWin = giftWin;
 	}
 }
