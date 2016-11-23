@@ -20,7 +20,7 @@
             <configuration>
               <transformers>
                 <transformer>
-                  <mainClass>com.mzm.firephoenix.cardutils.RandomCardTest</mainClass>
+                  <mainClass>org.oppa.utils.cardutils.RandomCardTest</mainClass>
                 </transformer>
               </transformers>
             </configuration>
