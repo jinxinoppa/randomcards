@@ -4,7 +4,7 @@
   <groupId>org.oppa.utils</groupId>
   <artifactId>RandomCards</artifactId>
   <name>cardutils</name>
-  <version>v1.0.4.161028_Jaguar</version>
+  <version>v1.1.0.161125_Jaguar</version>
   <url>http://maven.apache.org</url>
   <build>
     <plugins>

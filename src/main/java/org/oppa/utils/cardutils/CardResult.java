@@ -1,5 +1,7 @@
 package org.oppa.utils.cardutils;
 
+import java.security.MessageDigest;
+
 public class CardResult {
 	private int winType = 0;
 	private boolean isWin = false;
@@ -11,7 +13,43 @@ public class CardResult {
 	private int winCount;
 	private int giftWin = 0;
 	private int startIndex;
-	
+	private int jokerCount = 0;
+
+	public static String shaEncode(String inStr) throws Exception {
+		MessageDigest sha = null;
+		try {
+			sha = MessageDigest.getInstance("SHA");
+		} catch (Exception e) {
+			System.out.println(e.toString());
+			e.printStackTrace();
+			return "";
+		}
+
+		byte[] byteArray = inStr.getBytes("UTF-8");
+		byte[] md5Bytes = sha.digest(byteArray);
+		StringBuffer hexValue = new StringBuffer();
+		for (int i = 0; i < md5Bytes.length; i++) {
+			int val = ((int) md5Bytes[i]) & 0xff;
+			if (val < 16) {
+				hexValue.append("0");
+			}
+			hexValue.append(Integer.toHexString(val));
+		}
+		return hexValue.toString();
+	}
+
+	/**
+	 * 测试主函数
+	 * 
+	 * @param args
+	 * @throws Exception
+	 */
+	public static void main(String args[]) throws Exception {
+		String str = new String("amigoxiexiexingxing");
+		System.out.println("原始：" + str);
+		System.out.println("SHA后：" + shaEncode(str));
+	}
+
 	public int getStartIndex() {
 		return startIndex;
 	}
@@ -20,13 +58,13 @@ public class CardResult {
 		this.startIndex = startIndex;
 	}
 
-	public void reset(){
+	public void reset() {
 		setBet(0);
 		setWin(0);
 		setWinCount(0);
 		setGiftWin(0);
 	}
-	
+
 	public int getWinType() {
 		return winType;
 	}
@@ -102,5 +140,13 @@ public class CardResult {
 
 	public void setGiftWin(int giftWin) {
 		this.giftWin = giftWin;
+	}
+
+	public int getJokerCount() {
+		return jokerCount;
+	}
+
+	public void setJokerCount(int jokerCount) {
+		this.jokerCount = jokerCount;
 	}
 }
