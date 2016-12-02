@@ -14,6 +14,8 @@ public class CardResult {
 	private int giftWin = 0;
 	private int startIndex;
 	private int jokerCount = 0;
+	private byte keepCard = 0;
+	private byte replaceCard = 0;
 
 	public static String shaEncode(String inStr) throws Exception {
 		MessageDigest sha = null;
@@ -148,5 +150,21 @@ public class CardResult {
 
 	public void setJokerCount(int jokerCount) {
 		this.jokerCount = jokerCount;
+	}
+
+	public byte getKeepCard() {
+		return keepCard;
+	}
+
+	public void setKeepCard(byte keepCard) {
+		this.keepCard = keepCard;
+	}
+
+	public byte getReplaceCard() {
+		return replaceCard;
+	}
+
+	public void setReplaceCard(byte replaceCard) {
+		this.replaceCard = replaceCard;
 	}
 }
