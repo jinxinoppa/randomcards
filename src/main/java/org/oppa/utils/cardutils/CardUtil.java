@@ -43,13 +43,26 @@ public class CardUtil {
 		jqkList.add((byte) 13);
 	}
 
-	private final static byte[] prefabStraightFlush = new byte[]{5, 30, 26, 20, 16, 12, 4, 0};
-	private final static byte[][] winPoolStraightFlush = {{2, 3, 4, 5, 6}, {2, 53, 4, 5, 6}, {3, 4, 5, 6, 7}, {3, 4, 5, 53, 7}};
-	private final static double[] fivePrefab = new double[]{0.9, 0.91, 0.92, 0.93, 0.94, 0.95};
-	private final static byte[] winPoolFiveBars = {53, 53, 53, 53, 53};
-	private final static byte[][] winPoolRoyalFlush = {{10, 11, 12, 13, 1}, {53, 11, 12, 13, 1}};
-	private final static byte[][] winPoolFourOfAKindJoker = {{11, 24, 37, 50, 1}, {12, 25, 38, 51, 2}, {13, 26, 39, 52, 3}, {1, 14, 27, 40, 4}};
-	private final static byte[][] winPoolFiveOfAKind = {{11, 24, 37, 1, 2}, {12, 25, 38, 51, 1}};
+	public final static double[] FIVEPREFAB = new double[]{0.9, 0.91, 0.92, 0.93, 0.94, 0.95};
+
+	public final static byte[][] WINPOOLSTRAIGHTFLUSH = {{1, 2, 3, 4, 5}, {2, 3, 4, 5, 6}, {3, 4, 5, 6, 7}, {4, 5, 6, 7, 8}, {5, 6, 7, 8, 9}, {6, 7, 8, 9, 10}, {7, 8, 9, 10, 11}, {8, 9, 10, 11, 12}, {9, 10, 11, 12, 13}};
+	public final static byte[] WINPOOLFIVEBARS = {53, 53, 53, 53, 53};
+	public final static byte[][] WINPOOLROYALFLUSH = {{10, 11, 12, 13, 1}};
+
+	public final static byte[][] WINPOOLFOUROFAKINDJOKER = {{11, 24, 37, 50, 1}, {12, 25, 38, 51, 2}, {13, 26, 39, 52, 3}, {1, 14, 27, 40, 4}};
+	public final static byte[][] WINPOOLFIVEOFAKIND = {{2, 15, 28, 41, 53}
+	// {11, 24, 37, 50, 1}, {12, 25, 38, 51, 1}, {13, 26, 39, 52, 1}
+	};
+	public final static List<FivepkPrefab> fivepkPrefabList = new ArrayList<FivepkPrefab>(5);
+	static {
+		fivepkPrefabList.add(new FivepkPrefab(80, 5, 30, 26, 20, 16, 12, 4, 0));
+		fivepkPrefabList.add(new FivepkPrefab(120, 5, 30, 26, 20, 16, 12, 4, 0));
+		fivepkPrefabList.add(new FivepkPrefab(250, 5, 16, 14, 12, 10, 6, 2, 0));
+		fivepkPrefabList.add(new FivepkPrefab(500, 5, 16, 14, 12, 10, 6, 2, 0));
+		fivepkPrefabList.add(new FivepkPrefab(1000, 5, 26, 20, 10, 12, 8, 4, 0));
+	}
+
+	public final static Map<String, Map<Integer, Double>> RANDOMBUFF = new HashMap<String, Map<Integer, Double>>();
 
 	static enum CardColor {
 		Diamond(1), Club(2), Heart(3), Spade(4), Joker(5);
@@ -576,7 +589,7 @@ public class CardUtil {
 	// }
 	// }
 
-	public void printAndExcel(String count, int prefab) {
+	public void printAndExcel(String count, int... prefabs) {
 		int totalCount = Integer.valueOf(count);
 		int fullHouseCount = 0;
 		int flushCount = 0;
@@ -588,6 +601,7 @@ public class CardUtil {
 		int smallSevenBetterCount = 0;
 		int failCount = 0;
 		int fourOfAKindJA = 0;
+		int fourOfAKindJAJoker = 0;
 		int fourOfAKindTwoTen = 0;
 		int straightFlush = 0;
 		// int straightFlushCount = 0;
@@ -598,200 +612,298 @@ public class CardUtil {
 		int fourFlush = 0;
 		byte[] cardArray = null;
 		int winCount = 0;
-		switch (prefabStraightFlush[prefab]) {
-			case 5 :
-				winCount = (int) ((1000 * 120 * (1 - fivePrefab[RandomUtils.nextInt(0, 6)])) / prefabStraightFlush[prefab]);
-				break;
-			case 0 :
-				winCount = 0;
-				break;
-			default :
-				winCount = (1000 * 120) / prefabStraightFlush[prefab];
-				break;
-		}
 
 		XSSFWorkbook workbook = new XSSFWorkbook();
 		int columnIndex = 0;
 
 		byte keepCard = 0;
 		int randomRemove = 0;
-
+		int sameColor = 0;
+		int sameColor2 = 0;
+		int totalWinCount = 0;
+		int plusWinCount = 0;
+		String machineId = "1";
+		FivepkSeoId fivepkSeoId = new FivepkSeoId();
+		fivepkSeoId.setPrefabFiveBars((byte)prefabs[0]);
+		fivepkSeoId.setPrefabRoyalFlush((byte)prefabs[1]);
+		fivepkSeoId.setPrefabFiveOfAKind((byte)prefabs[2]);
+		fivepkSeoId.setPrefabStraightFlush((byte)prefabs[3]);
+		fivepkSeoId.setPrefabFourOfAKindJOKER((byte)prefabs[4]);
 		List<CardResult> secondList = new ArrayList<CardResult>();
+		int prefab = 0;
 		for (int i = 1; i < totalCount + 1; i++) {
 			CardResult cr = new CardResult();
-			cardArray = firstRandomCards(cr).getCards();
-			secondList.add(cr);
-			cr.setCards(cardArray);
 
-			if (winCount != 0 && i % winCount == 0) {
-				byte[] cardArray1 = new byte[5];
-				cardArray1 = Arrays.copyOf(winPoolStraightFlush[RandomUtils.nextInt(0, winPoolStraightFlush.length)], cardArray1.length);
-				int sameColor = 0;
-				int sameColor2 = 0;
+			for (int i1 = 0; i1 < fivepkPrefabList.size(); i1++) {
+				FivepkPrefab fivepkPrefab = fivepkPrefabList.get(i1);
+				prefab = fivepkSeoId.getPrefab(fivepkPrefab.getPrefabCards());
+				prefab = fivepkPrefab.getPrefab(prefab);
+				if (prefab == 0) {
+					continue;
+				}
 
-				sameColor = 13 * RandomUtils.nextInt(0, 4);
-				randomRemove = RandomUtils.nextInt(0, 5);
-				while (true) {
-					sameColor2 = 13 * RandomUtils.nextInt(0, 4);
-					if (sameColor != sameColor2) {
+				totalWinCount = (int) (1000 * fivepkPrefab.getPrefabCards());
+
+				winCount = prefab;
+				if (fivepkPrefab.getPrefabCards() == 80) {
+					if (prefab == 5) {
+						Map<Integer, Double> prefabBuffMap = RANDOMBUFF.get(machineId);
+						if (prefabBuffMap == null) {
+							prefabBuffMap = new HashMap<Integer, Double>();
+							RANDOMBUFF.put(machineId, prefabBuffMap);
+						}
+						Double randomBuff = prefabBuffMap.get(fivepkPrefab.getPrefabCards());
+						if (randomBuff == null) {
+							randomBuff = FIVEPREFAB[RandomUtils.nextInt(0, 6)];
+							prefabBuffMap.put(fivepkPrefab.getPrefabCards(), randomBuff);
+							plusWinCount = (int) ((1000 * fivepkPrefab.getPrefabCards() * randomBuff));
+							fivepkSeoId.setPrefabFourOfAKindJOKERCount(plusWinCount);
+						}
+					} else {
+						Map<Integer, Double> prefabBuffMap = RANDOMBUFF.get(machineId);
+						if (prefabBuffMap != null) {
+							prefabBuffMap.remove(fivepkPrefab.getPrefabCards());
+						}
+					}
+					fivepkSeoId.setPrefabFourOfAKindJOKERCount(fivepkSeoId.getPrefabFourOfAKindJOKERCount() + winCount);
+					if (fivepkSeoId.getPrefabFourOfAKindJOKERCount() >= totalWinCount) {
+						cr.setWinType(fivepkPrefab.getPrefabCards());
+						fivepkSeoId.setPrefabFourOfAKindJOKERCount(0);
+						break;
+					}
+				} else if (fivepkPrefab.getPrefabCards() == 120) {
+					if (prefab == 5) {
+						Map<Integer, Double> prefabBuffMap = RANDOMBUFF.get(machineId);
+						if (prefabBuffMap == null) {
+							prefabBuffMap = new HashMap<Integer, Double>();
+							RANDOMBUFF.put(machineId, prefabBuffMap);
+						}
+						Double randomBuff = prefabBuffMap.get(fivepkPrefab.getPrefabCards());
+						if (randomBuff == null) {
+							randomBuff = FIVEPREFAB[RandomUtils.nextInt(0, 6)];
+							prefabBuffMap.put(fivepkPrefab.getPrefabCards(), randomBuff);
+							plusWinCount = (int) ((1000 * fivepkPrefab.getPrefabCards() * randomBuff));
+							fivepkSeoId.setPrefabStraightFlushCount(plusWinCount);
+						}
+					} else {
+						Map<Integer, Double> prefabBuffMap = RANDOMBUFF.get(machineId);
+						if (prefabBuffMap != null) {
+							prefabBuffMap.remove(fivepkPrefab.getPrefabCards());
+						}
+					}
+					fivepkSeoId.setPrefabStraightFlushCount(fivepkSeoId.getPrefabStraightFlushCount() + winCount);
+					if (fivepkSeoId.getPrefabStraightFlushCount() >= totalWinCount) {
+						cr.setWinType(fivepkPrefab.getPrefabCards());
+						fivepkSeoId.setPrefabStraightFlushCount(0);
+						break;
+					}
+				} else if (fivepkPrefab.getPrefabCards() == 250) {
+					if (prefab == 5) {
+						Map<Integer, Double> prefabBuffMap = RANDOMBUFF.get(machineId);
+						if (prefabBuffMap == null) {
+							prefabBuffMap = new HashMap<Integer, Double>();
+							RANDOMBUFF.put(machineId, prefabBuffMap);
+						}
+						Double randomBuff = prefabBuffMap.get(fivepkPrefab.getPrefabCards());
+						if (randomBuff == null) {
+							randomBuff = FIVEPREFAB[RandomUtils.nextInt(0, 6)];
+							prefabBuffMap.put(fivepkPrefab.getPrefabCards(), randomBuff);
+							plusWinCount = (int) ((1000 * fivepkPrefab.getPrefabCards() * randomBuff));
+							fivepkSeoId.setPrefabFiveOfAKindCount(plusWinCount);
+						}
+					} else {
+						Map<Integer, Double> prefabBuffMap = RANDOMBUFF.get(machineId);
+						if (prefabBuffMap != null) {
+							prefabBuffMap.remove(fivepkPrefab.getPrefabCards());
+						}
+					}
+					fivepkSeoId.setPrefabFiveOfAKindCount(fivepkSeoId.getPrefabFiveOfAKindCount() + winCount);
+					if (fivepkSeoId.getPrefabFiveOfAKindCount() >= totalWinCount) {
+						cr.setWinType(fivepkPrefab.getPrefabCards());
+						fivepkSeoId.setPrefabFiveOfAKindCount(0);
+						break;
+					}
+				} else if (fivepkPrefab.getPrefabCards() == 500) {
+					if (prefab == 5) {
+						Map<Integer, Double> prefabBuffMap = RANDOMBUFF.get(machineId);
+						if (prefabBuffMap == null) {
+							prefabBuffMap = new HashMap<Integer, Double>();
+							RANDOMBUFF.put(machineId, prefabBuffMap);
+						}
+						Double randomBuff = prefabBuffMap.get(fivepkPrefab.getPrefabCards());
+						if (randomBuff == null) {
+							randomBuff = FIVEPREFAB[RandomUtils.nextInt(0, 6)];
+							prefabBuffMap.put(fivepkPrefab.getPrefabCards(), randomBuff);
+							plusWinCount = (int) ((1000 * fivepkPrefab.getPrefabCards() * randomBuff));
+							fivepkSeoId.setPrefabRoyalFlushCount(plusWinCount);
+						}
+					} else {
+						Map<Integer, Double> prefabBuffMap = RANDOMBUFF.get(machineId);
+						if (prefabBuffMap != null) {
+							prefabBuffMap.remove(fivepkPrefab.getPrefabCards());
+						}
+					}
+					fivepkSeoId.setPrefabRoyalFlushCount(fivepkSeoId.getPrefabRoyalFlushCount() + winCount);
+					if (fivepkSeoId.getPrefabRoyalFlushCount() >= totalWinCount) {
+						cr.setWinType(fivepkPrefab.getPrefabCards());
+						fivepkSeoId.setPrefabRoyalFlushCount(0);
+						break;
+					}
+				} else if (fivepkPrefab.getPrefabCards() == 1000) {
+					if (prefab == 5) {
+						Map<Integer, Double> prefabBuffMap = RANDOMBUFF.get(machineId);
+						if (prefabBuffMap == null) {
+							prefabBuffMap = new HashMap<Integer, Double>();
+							RANDOMBUFF.put(machineId, prefabBuffMap);
+						}
+						Double randomBuff = prefabBuffMap.get(fivepkPrefab.getPrefabCards());
+						if (randomBuff == null) {
+							randomBuff = FIVEPREFAB[RandomUtils.nextInt(0, 6)];
+							prefabBuffMap.put(fivepkPrefab.getPrefabCards(), randomBuff);
+							plusWinCount = (int) ((1000 * fivepkPrefab.getPrefabCards() * randomBuff));
+							fivepkSeoId.setPrefabFiveBarsCount(plusWinCount);
+						}
+					} else {
+						Map<Integer, Double> prefabBuffMap = RANDOMBUFF.get(machineId);
+						if (prefabBuffMap != null) {
+							prefabBuffMap.remove(fivepkPrefab.getPrefabCards());
+						}
+					}
+					fivepkSeoId.setPrefabFiveBarsCount(fivepkSeoId.getPrefabFiveBarsCount() + winCount);
+					if (fivepkSeoId.getPrefabFiveBarsCount() >= totalWinCount) {
+						cr.setWinType(fivepkPrefab.getPrefabCards());
+						fivepkSeoId.setPrefabFiveBarsCount(0);
 						break;
 					}
 				}
-				keepCard = cardArray1[randomRemove];
-				cardArray1[randomRemove] = (byte) (sameColor2 + RandomUtils.nextInt(2, 14));
-				cr.setReplaceCard(cardArray1[randomRemove]);
-				int card = 0, cardValue = 0;
-				int cardColor = 0;
-				String strCardValue = null;
-				StringBuffer sb = new StringBuffer();
-				for (int i2 = 0; i2 < cardArray1.length; i2++) {
-					card = cardArray1[i2];
-					cardValue = getCardValue(card);
-					switch (cardValue) {
-						case 11 :
-							strCardValue = "J";
-							break;
-						case 12 :
-							strCardValue = "Q";
-							break;
-						case 13 :
-							strCardValue = "K";
-							break;
-						case 1 :
-							strCardValue = "A";
-							break;
-						default :
-							strCardValue = String.valueOf(cardValue);
-							break;
-					}
-					cardColor = getCardColor(card);
-					switch (cardColor) {
-						case 1 :
-							sb.append(", 方块 " + strCardValue);
-							break;
-						case 2 :
-							sb.append(", 梅花 " + strCardValue);
-							break;
-						case 3 :
-							sb.append(", 红桃 " + strCardValue);
-							break;
-						case 4 :
-							sb.append(", 黑桃 " + strCardValue);
-							break;
-						case 5 :
-							sb.append(", 鬼");
-							break;
-						default :
-							break;
-					}
-				}
-				sb.deleteCharAt(0);
-				List<Byte> keepList = new ArrayList<Byte>();
-				for (byte j = 0; j < 5; j++) {
-					if (j != (byte) randomRemove) {
-						keepList.add(j);
-					}
-				}
-				System.out.println(Arrays.toString(cardArray1));
-				System.out.println(sb.toString());
-				cr.setCards(cardArray1);
-				cr.setKeepCards(ArrayUtils.toPrimitive(keepList.toArray(new Byte[keepList.size()])));
-				cr.setKeepCard(keepCard);
-				System.out.println("keepCard : " + keepCard);
-				// System.out.println(Arrays.toString(ArrayUtils.toPrimitive(keepList.toArray(new
-				// Byte[keepList.size()]))));
-				continue;
+			}
+			if (cr.getWinType() == 80) {
+				cardArray = Arrays.copyOf(WINPOOLFOUROFAKINDJOKER[RandomUtils.nextInt(0, WINPOOLFOUROFAKINDJOKER.length)], cardArray.length);
+				cr.setCards(cardArray);
+				cr.setKeepCards(new byte[]{0, 1, 2, 3, 4});
+				fourOfAKindJAJoker++;
+			} else if (cr.getWinType() == 120) {
+				cardArray = Arrays.copyOf(WINPOOLSTRAIGHTFLUSH[RandomUtils.nextInt(0, WINPOOLSTRAIGHTFLUSH.length)], cardArray.length);
+				cr.setCards(cardArray);
+				cr.setKeepCards(new byte[]{0, 1, 2, 3, 4});
+			} else if (cr.getWinType() == 250) {
+				cardArray = Arrays.copyOf(WINPOOLFIVEOFAKIND[RandomUtils.nextInt(0, WINPOOLFIVEOFAKIND.length)], cardArray.length);
+				cr.setCards(cardArray);
+				cr.setKeepCards(new byte[]{0, 1, 2, 3, 4});
+			} else if (cr.getWinType() == 500) {
+				cardArray = Arrays.copyOf(WINPOOLROYALFLUSH[RandomUtils.nextInt(0, WINPOOLROYALFLUSH.length)], cardArray.length);
+				cr.setCards(cardArray);
+				cr.setKeepCards(new byte[]{0, 1, 2, 3, 4});
+			} else if (cr.getWinType() == 1000) {
+				cardArray = Arrays.copyOf(WINPOOLFIVEBARS, cardArray.length);
+				cr.setCards(cardArray);
+				cr.setKeepCards(new byte[]{0, 1, 2, 3, 4});
+			} else {
+				cardArray = CardUtil.firstRandomCards1(cr).getCards();
 			}
 
+			secondList.add(cr);
+			cr.setCards(cardArray);
+			cr.setWin(false);
 			if (fiveBars(cardArray, cr).isWin()) {
 				cr.setWin(false);
 				fiveBars++;
-				appendCards(cardArray, getHSSFSheet(workbook, "五鬼"), columnIndex, fiveBars);
+				cr.setWinType(1000);
+//				appendCards(cardArray, getHSSFSheet(workbook, "五鬼"), columnIndex, fiveBars);
 			} else if (royalFlush(cardArray, cr).isWin()) {
 				cr.setWin(false);
 				royalFlush++;
-				appendCards(cardArray, getHSSFSheet(workbook, "同花大顺"), columnIndex, royalFlush);
+				cr.setWinType(500);
+//				appendCards(cardArray, getHSSFSheet(workbook, "同花大顺"), columnIndex, royalFlush);
 			} else if (fiveOfAKind(cardArray, cr).isWin()) {
 				cr.setWin(false);
 				fiveOfAKind++;
-				appendCards(cardArray, getHSSFSheet(workbook, "五梅"), columnIndex, fiveOfAKind);
+				cr.setWinType(250);
+//				appendCards(cardArray, getHSSFSheet(workbook, "五梅"), columnIndex, fiveOfAKind);
 			} else if (straightFlush(cardArray, cr).isWin()) {
 				cr.setWin(false);
-				// if (winCount == 0){
-				continue;
-				// } else if (i % winCount == 0){
-				// straightFlushCount = 0;
-				// straightFlush++;
-				// appendCards(cardArray, getHSSFSheet(workbook, "同花小顺"),
-				// columnIndex, straightFlush);
-				// }
-				// straightFlushCount++;
+				straightFlush++;
+				cr.setWinType(120);
+//				appendCards(cardArray, getHSSFSheet(workbook, "同花小顺"), columnIndex, straightFlush);
 			} else if (fourOfAKindJA(cardArray, cr).isWin()) {
 				cr.setWin(false);
 				fourOfAKindJA++;
-				appendCards(cardArray, getHSSFSheet(workbook, "大四梅"), columnIndex, fourOfAKindJA);
+				cr.setWinType(80);
+//				appendCards(cardArray, getHSSFSheet(workbook, "大四梅"), columnIndex, fourOfAKindJA);
 			} else if (fourOfAKindTwoTen(cardArray, cr).isWin()) {
 				cr.setWin(false);
 				fourOfAKindTwoTen++;
-				appendCards(cardArray, getHSSFSheet(workbook, "小四梅"), columnIndex, fourOfAKindTwoTen);
+				cr.setWinType(50);
+//				appendCards(cardArray, getHSSFSheet(workbook, "小四梅"), columnIndex, fourOfAKindTwoTen);
 			} else if (fullHouse(cardArray, cr).isWin()) {
 				cr.setWin(false);
+				cr.setWinType(10);
 				fullHouseCount++;
-				appendCards(cardArray, getHSSFSheet(workbook, "葫芦"), columnIndex, fullHouseCount);
+//				appendCards(cardArray, getHSSFSheet(workbook, "葫芦"), columnIndex, fullHouseCount);
 			} else if (flush(cardArray, cr).isWin()) {
 				cr.setWin(false);
+				cr.setWinType(7);
 				flushCount++;
-				appendCards(cardArray, getHSSFSheet(workbook, "同花"), columnIndex, flushCount);
+//				appendCards(cardArray, getHSSFSheet(workbook, "同花"), columnIndex, flushCount);
 			} else if (straight(cardArray, cr).isWin()) {
 				cr.setWin(false);
+				cr.setWinType(5);
 				straightCount++;
-				appendCards(cardArray, getHSSFSheet(workbook, "顺子"), columnIndex, straightCount);
+//				appendCards(cardArray, getHSSFSheet(workbook, "顺子"), columnIndex, straightCount);
 			} else if (threeOfAKind(cardArray, cr).isWin()) {
 				cr.setWin(false);
+				cr.setWinType(3);
 				threeOfAKindCount++;
-				appendCards(cardArray, getHSSFSheet(workbook, "三条"), columnIndex, threeOfAKindCount);
+//				appendCards(cardArray, getHSSFSheet(workbook, "三条"), columnIndex, threeOfAKindCount);
 			} else if (twoPairs(cardArray, cr).isWin()) {
 				cr.setWin(false);
+				cr.setWinType(2);
 				twoPairsCount++;
-				appendCards(cardArray, getHSSFSheet(workbook, "两对"), columnIndex, twoPairsCount);
+//				appendCards(cardArray, getHSSFSheet(workbook, "两对"), columnIndex, twoPairsCount);
 			} else if (sevenBetter(cardArray, cr).isWin()) {
 				cr.setWin(false);
 				sevenBetterCount++;
-				appendCards(cardArray, getHSSFSheet(workbook, "大一对"), columnIndex, sevenBetterCount);
+				cr.setWinType(1);
+//				appendCards(cardArray, getHSSFSheet(workbook, "大一对"), columnIndex, sevenBetterCount);
 			} else if (fourFlush(cardArray, cr).isWin()) {
 				cr.setWin(false);
+				cr.setWinType(-1);
 				fourFlush++;
-				appendCards(cardArray, getHSSFSheet(workbook, "四张同花"), columnIndex, fourFlush);
+//				appendCards(cardArray, getHSSFSheet(workbook, "四张同花"), columnIndex, fourFlush);
 			} else if (fourStraight(cardArray, cr).isWin() || fourStraightThird(cardArray, cr).isWin() || fourStraightFourth(cardArray, cr).isWin()) {
 				cr.setWin(false);
+				cr.setWinType(-2);
 				fourStraight++;
-				appendCards(cardArray, getHSSFSheet(workbook, "四张顺"), columnIndex, fourStraight);
+//				appendCards(cardArray, getHSSFSheet(workbook, "四张顺"), columnIndex, fourStraight);
 			} else if (sevenBetterKeep(cardArray, cr).isWin()) {
 				cr.setWin(false);
+				cr.setWinType(-3);
 				smallSevenBetterCount++;
-				appendCards(cardArray, getHSSFSheet(workbook, "小一对"), columnIndex, fourStraight);
+//				appendCards(cardArray, getHSSFSheet(workbook, "小一对"), columnIndex, fourStraight);
 			} else {
 				cr.setWin(false);
+				cr.setWinType(-4);
 				failCount++;
-				appendCards(cardArray, getHSSFSheet(workbook, "乌龙"), columnIndex, failCount);
+//				appendCards(cardArray, getHSSFSheet(workbook, "乌龙"), columnIndex, failCount);
 			}
 		}
 		System.out.println("五鬼: " + fiveBars + " | " + (fiveBars == 0 ? 0 : totalCount / fiveBars) + " | " + div(fiveBars, totalCount));
 		System.out.println("同花大顺: " + royalFlush + " | " + (royalFlush == 0 ? 0 : totalCount / royalFlush) + " | " + div(royalFlush, totalCount));
 		System.out.println("五梅: " + fiveOfAKind + " | " + (fiveOfAKind == 0 ? 0 : totalCount / fiveOfAKind) + " | " + div(fiveOfAKind, totalCount));
 		System.out.println("同花小顺: " + straightFlush + " | " + (straightFlush == 0 ? 0 : totalCount / straightFlush) + " | " + div(straightFlush, totalCount));
-		System.out.println("大四梅: " + fourOfAKindJA + " | " + (fourOfAKindJA == 0 ? 0 : totalCount / fourOfAKindJA) + " | " + div(fourOfAKindJA, totalCount));
-		System.out.println("小四梅: " + fourOfAKindTwoTen + " | " + (fourOfAKindTwoTen == 0 ? 0 : totalCount / fourOfAKindTwoTen) + " | " + div(fourOfAKindTwoTen, totalCount));
-		System.out.println("葫芦: " + fullHouseCount + " | " + (fullHouseCount == 0 ? 0 : totalCount / fullHouseCount) + " | " + div(fullHouseCount, totalCount));
-		System.out.println("同花: " + flushCount + " | " + (flushCount == 0 ? 0 : totalCount / flushCount) + " | " + div(flushCount, totalCount));
-		System.out.println("顺子: " + straightCount + " | " + (straightCount == 0 ? 0 : totalCount / straightCount) + " | " + div(straightCount, totalCount));
-		System.out.println("三条: " + threeOfAKindCount + " | " + (threeOfAKindCount == 0 ? 0 : totalCount / threeOfAKindCount) + " | " + div(threeOfAKindCount, totalCount));
-		System.out.println("两对: " + twoPairsCount + " | " + (twoPairsCount == 0 ? 0 : totalCount / twoPairsCount) + " | " + div(twoPairsCount, totalCount));
-		System.out.println("大一对: " + sevenBetterCount + " | " + (sevenBetterCount == 0 ? 0 : totalCount / sevenBetterCount) + " | " + div(sevenBetterCount, totalCount));
-		System.out.println("四張同花: " + fourFlush + " | " + (fourFlush == 0 ? 0 : totalCount / fourFlush) + " | " + div(fourFlush, totalCount));
-		System.out.println("四張順: " + fourStraight + " | " + (fourStraight == 0 ? 0 : totalCount / fourStraight) + " | " + div(fourStraight, totalCount));
-		System.out.println("小一对: " + smallSevenBetterCount + " | " + (smallSevenBetterCount == 0 ? 0 : totalCount / smallSevenBetterCount) + " | " + div(smallSevenBetterCount, totalCount));
-		System.out.println("乌龙: " + failCount + " | " + (failCount == 0 ? 0 : totalCount / failCount) + " | " + div(failCount, totalCount));
+		System.out.println("正宗大四梅: " + fourOfAKindJAJoker + " | " + (fourOfAKindJAJoker == 0 ? 0 : totalCount / fourOfAKindJAJoker) + " | " + div(fourOfAKindJAJoker, totalCount));
+		System.out.println("大四梅: " + (fourOfAKindJA - fourOfAKindJAJoker) + " | " + ((fourOfAKindJA - fourOfAKindJAJoker) <= 0 ? 0 : div1(totalCount, (fourOfAKindJA - fourOfAKindJAJoker), 2)) + " | " + div((fourOfAKindJA - fourOfAKindJAJoker), totalCount));
+		System.out.println("小四梅: " + fourOfAKindTwoTen + " | " + (fourOfAKindTwoTen == 0 ? 0 : div1(totalCount, fourOfAKindTwoTen, 2)) + " | " + div(fourOfAKindTwoTen, totalCount));
+		System.out.println("葫芦: " + fullHouseCount + " | " + (fullHouseCount == 0 ? 0 : div1(totalCount, fullHouseCount, 2)) + " | " + div(fullHouseCount, totalCount));
+		System.out.println("同花: " + flushCount + " | " + (flushCount == 0 ? 0 : div1(totalCount, flushCount, 2)) + " | " + div(flushCount, totalCount));
+		System.out.println("顺子: " + straightCount + " | " + (straightCount == 0 ? 0 : div1(totalCount, straightCount, 2)) + " | " + div(straightCount, totalCount));
+		System.out.println("三条: " + threeOfAKindCount + " | " + (threeOfAKindCount == 0 ? 0 : div1(totalCount, threeOfAKindCount, 2)) + " | " + div(threeOfAKindCount, totalCount));
+		System.out.println("两对: " + twoPairsCount + " | " + (twoPairsCount == 0 ? 0 : div1(totalCount, twoPairsCount, 2)) + " | " + div(twoPairsCount, totalCount));
+		System.out.println("大一对: " + sevenBetterCount + " | " + (sevenBetterCount == 0 ? 0 : div1(totalCount, sevenBetterCount, 2)) + " | " + div(sevenBetterCount, totalCount));
+		System.out.println("小一对: " + smallSevenBetterCount + " | " + (smallSevenBetterCount == 0 ? 0 : div1(totalCount, smallSevenBetterCount, 2)) + " | " + div(smallSevenBetterCount, totalCount));
+		System.out.println("四張同花: " + fourFlush + " | " + (fourFlush == 0 ? 0 : div1(totalCount, fourFlush, 2)) + " | " + div(fourFlush, totalCount));
+		System.out.println("四張順: " + fourStraight + " | " + (fourStraight == 0 ? 0 : div1(totalCount, fourStraight, 2)) + " | " + div(fourStraight, totalCount));
+		System.out.println("乌龙: " + failCount + " | " + (failCount == 0 ? 0 : div1(totalCount, failCount, 2)) + " | " + div(failCount, totalCount));
 		System.out.println("--------------------第一手牌结束--------------------");
 		System.out.println();
 		fullHouseCount = 0;
@@ -804,7 +916,7 @@ public class CardUtil {
 		failCount = 0;
 		fourOfAKindJA = 0;
 		fourOfAKindTwoTen = 0;
-		// straightFlush = 0;
+		straightFlush = 0;
 		fiveOfAKind = 0;
 		royalFlush = 0;
 		fiveBars = 0;
@@ -814,130 +926,72 @@ public class CardUtil {
 		for (int i = 1; i < secondList.size() + 1; i++) {
 			CardResult cr = secondList.get(i - 1);
 
-			if (winCount != 0 && i % winCount == 0) {
-				if (secondList.size() / winCount <= straightFlush) {
-					continue;
-				} else {
-					straightFlush++;
-					byte[] cardArray2 = cr.getCards();
-					for (int j = 0; j < cardArray2.length; j++) {
-						if (cardArray2[j] == cr.getReplaceCard()) {
-							randomRemove = j;
-							break;
-						}
-					}
-					cardArray2[randomRemove] = cr.getKeepCard();
-					int card = 0, cardValue = 0;
-					int cardColor = 0;
-					String strCardValue = null;
-					StringBuffer sb = new StringBuffer();
-					for (int i2 = 0; i2 < cardArray2.length; i2++) {
-						card = cardArray2[i2];
-						cardValue = getCardValue(card);
-						switch (cardValue) {
-							case 11 :
-								strCardValue = "J";
-								break;
-							case 12 :
-								strCardValue = "Q";
-								break;
-							case 13 :
-								strCardValue = "K";
-								break;
-							case 1 :
-								strCardValue = "A";
-								break;
-							default :
-								strCardValue = String.valueOf(cardValue);
-								break;
-						}
-						cardColor = getCardColor(card);
-						switch (cardColor) {
-							case 1 :
-								sb.append(", 方块 " + strCardValue);
-								break;
-							case 2 :
-								sb.append(", 梅花 " + strCardValue);
-								break;
-							case 3 :
-								sb.append(", 红桃 " + strCardValue);
-								break;
-							case 4 :
-								sb.append(", 黑桃 " + strCardValue);
-								break;
-							case 5 :
-								sb.append(", 鬼");
-								break;
-							default :
-								break;
-						}
-					}
-					sb.deleteCharAt(0);
-					System.out.println(sb.toString());
-					continue;
-				}
-			}
-
 			cardArray = secondRandomCards2(cr).getCards();
 
 			if (fiveBars(cardArray, cr).isWin()) {
-				fiveBars++;
-				appendCards(cardArray, getHSSFSheet(workbook, "五鬼"), columnIndex, fiveBars);
-			} else if (royalFlush(cardArray, cr).isWin()) {
-				royalFlush++;
-				appendCards(cardArray, getHSSFSheet(workbook, "同花大顺"), columnIndex, royalFlush);
-			} else if (fiveOfAKind(cardArray, cr).isWin()) {
-				fiveOfAKind++;
-				appendCards(cardArray, getHSSFSheet(workbook, "五梅"), columnIndex, fiveOfAKind);
-			} else if (straightFlush(cardArray, cr).isWin()) {
-				// if (winCount == 0){
-				continue;
-				// } else if (i % winCount == 0){
-				// straightFlushCount = 0;
-				// straightFlush++;
-				// appendCards(cardArray, getHSSFSheet(workbook, "同花小顺"),
-				// columnIndex, straightFlush);
-				// }
-				// straightFlushCount++;
-			} else if (fourOfAKindJA(cardArray, cr).isWin()) {
-				fourOfAKindJA++;
-				appendCards(cardArray, getHSSFSheet(workbook, "大四梅"), columnIndex, fourOfAKindJA);
-			} else if (fourOfAKindTwoTen(cardArray, cr).isWin()) {
-				fourOfAKindTwoTen++;
-				appendCards(cardArray, getHSSFSheet(workbook, "小四梅"), columnIndex, fourOfAKindTwoTen);
-			} else if (fullHouse(cardArray, cr).isWin()) {
-				fullHouseCount++;
-				appendCards(cardArray, getHSSFSheet(workbook, "葫芦"), columnIndex, fullHouseCount);
-			} else if (flush(cardArray, cr).isWin()) {
-				flushCount++;
-				appendCards(cardArray, getHSSFSheet(workbook, "同花"), columnIndex, flushCount);
-			} else if (straight(cardArray, cr).isWin()) {
-				straightCount++;
-				appendCards(cardArray, getHSSFSheet(workbook, "顺子"), columnIndex, straightCount);
-			} else if (threeOfAKind(cardArray, cr).isWin()) {
-				threeOfAKindCount++;
-				appendCards(cardArray, getHSSFSheet(workbook, "三条"), columnIndex, threeOfAKindCount);
-			} else if (twoPairs(cardArray, cr).isWin()) {
-				twoPairsCount++;
-				appendCards(cardArray, getHSSFSheet(workbook, "两对"), columnIndex, twoPairsCount);
-			} else if (sevenBetter(cardArray, cr).isWin()) {
-				sevenBetterCount++;
-				appendCards(cardArray, getHSSFSheet(workbook, "大一对"), columnIndex, sevenBetterCount);
-			} else if (fourFlush(cardArray, cr).isWin()) {
-				fourFlush++;
-				appendCards(cardArray, getHSSFSheet(workbook, "四张同花"), columnIndex, fourFlush);
-			} else if (fourStraight(cardArray, cr).isWin() || fourStraightThird(cardArray, cr).isWin() || fourStraightFourth(cardArray, cr).isWin()) {
 				cr.setWin(false);
-				fourStraight++;
-				appendCards(cardArray, getHSSFSheet(workbook, "四张顺"), columnIndex, fourStraight);
+				fiveBars++;
+//				appendCards(cardArray, getHSSFSheet(workbook, "五鬼"), columnIndex, fiveBars);
+			} else if (royalFlush(cardArray, cr).isWin()) {
+				cr.setWin(false);
+				royalFlush++;
+//				appendCards(cardArray, getHSSFSheet(workbook, "同花大顺"), columnIndex, royalFlush);
+			} else if (fiveOfAKind(cardArray, cr).isWin()) {
+				cr.setWin(false);
+				fiveOfAKind++;
+//				appendCards(cardArray, getHSSFSheet(workbook, "五梅"), columnIndex, fiveOfAKind);
+			} else if (straightFlush(cardArray, cr).isWin()) {
+				cr.setWin(false);
+				straightFlush++;
+//				appendCards(cardArray, getHSSFSheet(workbook, "同花小顺"), columnIndex, straightFlush);
+			} else if (fourOfAKindJA(cardArray, cr).isWin()) {
+				cr.setWin(false);
+				fourOfAKindJA++;
+//				appendCards(cardArray, getHSSFSheet(workbook, "大四梅"), columnIndex, fourOfAKindJA);
+			} else if (fourOfAKindTwoTen(cardArray, cr).isWin()) {
+				cr.setWin(false);
+				fourOfAKindTwoTen++;
+//				appendCards(cardArray, getHSSFSheet(workbook, "小四梅"), columnIndex, fourOfAKindTwoTen);
+			} else if (fullHouse(cardArray, cr).isWin()) {
+				cr.setWin(false);
+				fullHouseCount++;
+//				appendCards(cardArray, getHSSFSheet(workbook, "葫芦"), columnIndex, fullHouseCount);
+			} else if (flush(cardArray, cr).isWin()) {
+				cr.setWin(false);
+				flushCount++;
+//				appendCards(cardArray, getHSSFSheet(workbook, "同花"), columnIndex, flushCount);
+			} else if (straight(cardArray, cr).isWin()) {
+				cr.setWin(false);
+				straightCount++;
+//				appendCards(cardArray, getHSSFSheet(workbook, "顺子"), columnIndex, straightCount);
+			} else if (threeOfAKind(cardArray, cr).isWin()) {
+				cr.setWin(false);
+				threeOfAKindCount++;
+//				appendCards(cardArray, getHSSFSheet(workbook, "三条"), columnIndex, threeOfAKindCount);
+			} else if (twoPairs(cardArray, cr).isWin()) {
+				cr.setWin(false);
+				twoPairsCount++;
+//				appendCards(cardArray, getHSSFSheet(workbook, "两对"), columnIndex, twoPairsCount);
+			} else if (sevenBetter(cardArray, cr).isWin()) {
+				cr.setWin(false);
+				sevenBetterCount++;
+//				appendCards(cardArray, getHSSFSheet(workbook, "大一对"), columnIndex, sevenBetterCount);
 			} else if (sevenBetterKeep(cardArray, cr).isWin()) {
 				cr.setWin(false);
 				smallSevenBetterCount++;
-				appendCards(cardArray, getHSSFSheet(workbook, "小一对"), columnIndex, fourStraight);
+//				appendCards(cardArray, getHSSFSheet(workbook, "小一对"), columnIndex, fourStraight);
+			} else if (fourFlush(cardArray, cr).isWin()) {
+				cr.setWin(false);
+				fourFlush++;
+//				appendCards(cardArray, getHSSFSheet(workbook, "四张同花"), columnIndex, fourFlush);
+			} else if (fourStraight(cardArray, cr).isWin() || fourStraightThird(cardArray, cr).isWin() || fourStraightFourth(cardArray, cr).isWin()) {
+				cr.setWin(false);
+				fourStraight++;
+//				appendCards(cardArray, getHSSFSheet(workbook, "四张顺"), columnIndex, fourStraight);
 			} else {
 				cr.setWin(false);
 				failCount++;
-				appendCards(cardArray, getHSSFSheet(workbook, "乌龙"), columnIndex, failCount);
+//				appendCards(cardArray, getHSSFSheet(workbook, "乌龙"), columnIndex, failCount);
 			}
 		}
 
@@ -945,18 +999,19 @@ public class CardUtil {
 		System.out.println("同花大顺: " + royalFlush + " | " + (royalFlush == 0 ? 0 : totalCount / royalFlush) + " | " + div(royalFlush, totalCount));
 		System.out.println("五梅: " + fiveOfAKind + " | " + (fiveOfAKind == 0 ? 0 : totalCount / fiveOfAKind) + " | " + div(fiveOfAKind, totalCount));
 		System.out.println("同花小顺: " + straightFlush + " | " + (straightFlush == 0 ? 0 : totalCount / straightFlush) + " | " + div(straightFlush, totalCount));
-		System.out.println("大四梅: " + fourOfAKindJA + " | " + (fourOfAKindJA == 0 ? 0 : totalCount / fourOfAKindJA) + " | " + div(fourOfAKindJA, totalCount));
-		System.out.println("小四梅: " + fourOfAKindTwoTen + " | " + (fourOfAKindTwoTen == 0 ? 0 : totalCount / fourOfAKindTwoTen) + " | " + div(fourOfAKindTwoTen, totalCount));
-		System.out.println("葫芦: " + fullHouseCount + " | " + (fullHouseCount == 0 ? 0 : totalCount / fullHouseCount) + " | " + div(fullHouseCount, totalCount));
-		System.out.println("同花: " + flushCount + " | " + (flushCount == 0 ? 0 : totalCount / flushCount) + " | " + div(flushCount, totalCount));
-		System.out.println("顺子: " + straightCount + " | " + (straightCount == 0 ? 0 : totalCount / straightCount) + " | " + div(straightCount, totalCount));
-		System.out.println("三条: " + threeOfAKindCount + " | " + (threeOfAKindCount == 0 ? 0 : totalCount / threeOfAKindCount) + " | " + div(threeOfAKindCount, totalCount));
-		System.out.println("两对: " + twoPairsCount + " | " + (twoPairsCount == 0 ? 0 : totalCount / twoPairsCount) + " | " + div(twoPairsCount, totalCount));
-		System.out.println("大一对: " + sevenBetterCount + " | " + (sevenBetterCount == 0 ? 0 : totalCount / sevenBetterCount) + " | " + div(sevenBetterCount, totalCount));
-		System.out.println("四張同花: " + fourFlush + " | " + (fourFlush == 0 ? 0 : totalCount / fourFlush) + " | " + div(fourFlush, totalCount));
-		System.out.println("四張順: " + fourStraight + " | " + (fourStraight == 0 ? 0 : totalCount / fourStraight) + " | " + div(fourStraight, totalCount));
-		System.out.println("小一对: " + smallSevenBetterCount + " | " + (smallSevenBetterCount == 0 ? 0 : totalCount / smallSevenBetterCount) + " | " + div(smallSevenBetterCount, totalCount));
-		System.out.println("乌龙: " + failCount + " | " + (failCount == 0 ? 0 : totalCount / failCount) + " | " + div(failCount, totalCount));
+		System.out.println("正宗大四梅: " + fourOfAKindJAJoker + " | " + (fourOfAKindJAJoker == 0 ? 0 : totalCount / fourOfAKindJAJoker) + " | " + div(fourOfAKindJAJoker, totalCount));
+		System.out.println("大四梅: " + (fourOfAKindJA - fourOfAKindJAJoker) + " | " + ((fourOfAKindJA - fourOfAKindJAJoker) <= 0 ? 0 : div1(totalCount, (fourOfAKindJA - fourOfAKindJAJoker), 2)) + " | " + div((fourOfAKindJA - fourOfAKindJAJoker), totalCount));
+		System.out.println("小四梅: " + fourOfAKindTwoTen + " | " + (fourOfAKindTwoTen == 0 ? 0 : div1(totalCount, fourOfAKindTwoTen, 2)) + " | " + div(fourOfAKindTwoTen, totalCount));
+		System.out.println("葫芦: " + fullHouseCount + " | " + (fullHouseCount == 0 ? 0 : div1(totalCount, fullHouseCount, 2)) + " | " + div(fullHouseCount, totalCount));
+		System.out.println("同花: " + flushCount + " | " + (flushCount == 0 ? 0 : div1(totalCount, flushCount, 2)) + " | " + div(flushCount, totalCount));
+		System.out.println("顺子: " + straightCount + " | " + (straightCount == 0 ? 0 : div1(totalCount, straightCount, 2)) + " | " + div(straightCount, totalCount));
+		System.out.println("三条: " + threeOfAKindCount + " | " + (threeOfAKindCount == 0 ? 0 : div1(totalCount, threeOfAKindCount, 2)) + " | " + div(threeOfAKindCount, totalCount));
+		System.out.println("两对: " + twoPairsCount + " | " + (twoPairsCount == 0 ? 0 : div1(totalCount, twoPairsCount, 2)) + " | " + div(twoPairsCount, totalCount));
+		System.out.println("大一对: " + sevenBetterCount + " | " + (sevenBetterCount == 0 ? 0 : div1(totalCount, sevenBetterCount, 2)) + " | " + div(sevenBetterCount, totalCount));
+		System.out.println("小一对: " + smallSevenBetterCount + " | " + (smallSevenBetterCount == 0 ? 0 : div1(totalCount, smallSevenBetterCount, 2)) + " | " + div(smallSevenBetterCount, totalCount));
+		System.out.println("四張同花: " + fourFlush + " | " + (fourFlush == 0 ? 0 : div1(totalCount, fourFlush, 2)) + " | " + div(fourFlush, totalCount));
+		System.out.println("四張順: " + fourStraight + " | " + (fourStraight == 0 ? 0 : div1(totalCount, fourStraight, 2)) + " | " + div(fourStraight, totalCount));
+		System.out.println("乌龙: " + failCount + " | " + (failCount == 0 ? 0 : div1(totalCount, failCount, 2)) + " | " + div(failCount, totalCount));
 
 		// try {
 		// FileOutputStream out = new FileOutputStream(new File("牌型检测.xlsx"));
@@ -1003,6 +1058,15 @@ public class CardUtil {
 		return b1.divide(b2, scale, BigDecimal.ROUND_HALF_UP).doubleValue() * 100;
 	}
 
+	public static double div1(double v1, double v2, int scale) {
+		if (scale < 0) {
+			throw new IllegalArgumentException("The scale must be a positive integer or zero");
+		}
+		BigDecimal b1 = new BigDecimal(Double.toString(v1));
+		BigDecimal b2 = new BigDecimal(Double.toString(v2));
+		return b1.divide(b2, scale, BigDecimal.ROUND_HALF_UP).doubleValue();
+	}
+	
 	public static byte[] doSort(byte[] sArr) {
 		byte[] tempArr = new byte[sArr.length];
 		Random random = new Random(new Date().getTime());
@@ -1026,41 +1090,59 @@ public class CardUtil {
 		// long startTime = System.currentTimeMillis();
 		byte[] cardArray = new byte[5];
 
-		for (int i = 0; i < cardArray.length; i++) {
-			nextInt = RandomUtils.nextInt(0, CardUtil.cards.length) + 1;
-			if (cr.getJokerCount() >= 2) {
-				nextInt = RandomUtils.nextInt(0, CardUtil.cards.length);
-			} else {
+		while (true) {
+			for (int i = 0; i < cardArray.length; i++) {
 				nextInt = RandomUtils.nextInt(0, CardUtil.cards.length) + 1;
-			}
-
-			if (nextInt == joker) {
-				cr.setJokerCount(cr.getJokerCount() + 1);
-			}
-			for (int j = 0; j < i; j++) {
-				if (nextInt != CardUtil.cards.length && cardArray[j] == nextInt) {
-					isRepeated = true;
-					break;
+				if (cr.getJokerCount() >= 1) {
+					nextInt = RandomUtils.nextInt(0, CardUtil.cards.length);
+				} else {
+					nextInt = RandomUtils.nextInt(0, CardUtil.cards.length) + 1;
 				}
+
+				if (nextInt == joker) {
+					cr.setJokerCount(cr.getJokerCount() + 1);
+				}
+				for (int j = 0; j < i; j++) {
+					if (nextInt != CardUtil.cards.length && cardArray[j] == nextInt) {
+						isRepeated = true;
+						break;
+					}
+				}
+				if (isRepeated) {
+					isRepeated = false;
+					i--;
+					continue;
+				}
+				cardArray[i] = (byte) nextInt;
 			}
-			if (isRepeated) {
-				isRepeated = false;
-				i--;
+			if (royalFlush(cardArray, cr).isWin()) {
+				cr.setWin(false);
+				cr.setKeepCards(null);
+				continue;
+			} else if (fiveOfAKind(cardArray, cr).isWin()) {
+				cr.setWin(false);
+				cr.setKeepCards(null);
+				continue;
+			} else if (straightFlush(cardArray, cr).isWin()) {
+				cr.setWin(false);
+				cr.setKeepCards(null);
 				continue;
 			}
-			cardArray[i] = (byte) nextInt;
+			break;
 		}
 		cr.setCards(cardArray);
 
-		if (fiveBars(cardArray, cr).isWin()) {
-			cr.setWinType(1000);
-		} else if (royalFlush(cardArray, cr).isWin()) {
-			cr.setWinType(500);
-		} else if (fiveOfAKind(cardArray, cr).isWin()) {
-			cr.setWinType(250);
-		} else if (straightFlush(cardArray, cr).isWin()) {
-			cr.setWinType(120);
-		} else if (fourOfAKindJA(cardArray, cr).isWin()) {
+		// if (fiveBars(cardArray, cr).isWin()) {
+		// cr.setWinType(1000);
+		// } else
+//		if (royalFlush(cardArray, cr).isWin()) {
+//			cr.setWinType(500);
+//		} else if (fiveOfAKind(cardArray, cr).isWin()) {
+//			cr.setWinType(250);
+//		} else if (straightFlush(cardArray, cr).isWin()) {
+//			cr.setWinType(120);
+//		} else 
+		if (fourOfAKindJA(cardArray, cr).isWin()) {
 			cr.setWinType(80);
 		} else if (fourOfAKindTwoTen(cardArray, cr).isWin()) {
 			cr.setWinType(50);
@@ -1176,70 +1258,296 @@ public class CardUtil {
 		return cr;
 	}
 
+	public static CardResult firstRandomCards1(CardResult cr) {
+		int nextInt = 0;
+		boolean isRepeated = false;
+		// long startTime = System.currentTimeMillis();
+		byte[] cardArray = null;
+		Random r = new Random();
+		while (true) {
+			cardArray = new byte[5];
+			for (int i = 0; i < cardArray.length; i++) {
+				nextInt = RandomUtils.nextInt(0, CardUtil.cards.length) + 1;
+				if (cr.getJokerCount() >= 1) {
+					nextInt = RandomUtils.nextInt(0, CardUtil.cards.length);
+				} else {
+					nextInt = RandomUtils.nextInt(0, CardUtil.cards.length) + 1;
+				}
+
+				if (nextInt == joker) {
+					cr.setJokerCount(cr.getJokerCount() + 1);
+				}
+				for (int j = 0; j < i; j++) {
+					if (nextInt != CardUtil.cards.length && cardArray[j] == nextInt) {
+						isRepeated = true;
+						break;
+					}
+				}
+				if (isRepeated) {
+					isRepeated = false;
+					i--;
+					continue;
+				}
+				cardArray[i] = (byte) nextInt;
+			}
+			if (royalFlush(cardArray, cr).isWin()) {
+				cr.setWin(false);
+				cr.setKeepCards(null);
+				continue;
+			} else if (fiveOfAKind(cardArray, cr).isWin()) {
+				cr.setWin(false);
+				cr.setKeepCards(null);
+				continue;
+			} else if (straightFlush(cardArray, cr).isWin()) {
+				cr.setWin(false);
+				cr.setKeepCards(null);
+				continue;
+			} else if (fullHouse(cardArray, cr).isWin()) {
+				if (r.nextInt(100) < 96){
+					cr.setWin(false);
+					cr.setKeepCards(null);
+					cr.setJokerCount(0);
+					continue;
+				}
+			} else if (flush(cardArray, cr).isWin()) {
+				if (r.nextInt(100) < 55){
+					cr.setWin(false);
+					cr.setKeepCards(null);
+					cr.setJokerCount(0);
+					continue;
+				}
+			} else if (straight(cardArray, cr).isWin()) {
+				if (r.nextInt(100) < 45){
+					cr.setWin(false);
+					cr.setKeepCards(null);
+					cr.setJokerCount(0);
+					continue;
+				}
+			} else if (threeOfAKind(cardArray, cr).isWin()) {
+				if (r.nextInt(100) < 70){
+					cr.setWin(false);
+					cr.setKeepCards(null);
+					cr.setJokerCount(0);
+					continue;
+				}
+			} else if (sevenBetter(cardArray, cr).isWin()) {
+				if (r.nextInt(100) < 60){
+					cr.setWin(false);
+					cr.setKeepCards(null);
+					cr.setJokerCount(0);
+					continue;
+				}
+			} else if (sevenBetterKeep(cardArray, cr).isWin()) {
+				if (r.nextInt(100) < 60){
+					cr.setWin(false);
+					cr.setKeepCards(null);
+					cr.setJokerCount(0);
+					continue;
+				}
+			}
+//			else if ((fourStraight(cardArray, cr).isWin() || fourStraightThird(cardArray, cr).isWin() || fourStraightFourth(cardArray, cr).isWin()) && r.nextInt(100) < 40) {
+//				cr.setKeepCards(null);
+//				cr.setWin(false);
+//				cr.setJokerCount(0);
+//				continue;
+//			} else if (fourFlush(cardArray, cr).isWin() && r.nextInt(100) < 18) {
+//				cr.setWin(false);
+//				cr.setKeepCards(null);
+//				cr.setJokerCount(0);
+//				continue;
+//			}
+			break;
+		}
+		cr.setCards(cardArray);
+
+		return cr;
+	}
+	
 	public static CardResult secondRandomCards2(CardResult cr) {
-		cr.setWin(false);
-		cr.setWinType(0);
 		int nextInt = 0, cardValue = 0, cardColor = 0, compareCardValue = 0, compareCardColor = 0;
 		boolean isRepeated = false;
 		boolean isKeep = false;
 		byte[] cards = cr.getCards();
 		byte[] keepCards = cr.getKeepCards();
 		byte index = 0, sortedCardValue = 0, repeatedCardValue = 0;
-		for (int i = 0; i < cards.length; i++) {
-			if (keepCards != null) {
-				for (int k = 0; k < keepCards.length; k++) {
-					if (i == keepCards[k]) {
-						isKeep = true;
-						break;
-					}
-				}
-			}
-			if (isKeep) {
-				isKeep = false;
-				continue;
-			}
-			nextInt = RandomUtils.nextInt(0, CardUtil.cards.length) + 1;
-			if (cr.getJokerCount() >= 2) {
-				nextInt = RandomUtils.nextInt(0, CardUtil.cards.length);
-			} else {
-				nextInt = RandomUtils.nextInt(0, CardUtil.cards.length) + 1;
-			}
-
-			if (nextInt == joker) {
-				cr.setJokerCount(cr.getJokerCount() + 1);
-			}
-			compareCardColor = getCardColor(nextInt);
-			compareCardValue = getCardValue(nextInt);
-			if (keepCards != null) {
-				for (int j = 0; j < cards.length; j++) {
-					cardColor = getCardColor(cards[j]);
-					cardValue = getCardValue(cards[j]);
-					if (nextInt != CardUtil.cards.length) {
-						if (cards[j] == nextInt
-						// cardColor == compareCardColor ||
-						// cardValue == compareCardValue
-						) {
-							isRepeated = true;
-							break;
+		if (cr.getWinType() != 120 && cr.getWinType() != 250 && cr.getWinType() != 500 && cr.getWinType() != 1000){
+			cr.setWin(false);
+//			cr.setWinType(0);
+			boolean randomBoolean = false;
+			Random r = new Random();
+			while (true){
+				for (int i = 0; i < cards.length; i++) {
+					if (keepCards != null) {
+						for (int k = 0; k < keepCards.length; k++) {
+							if (i == keepCards[k]) {
+								isKeep = true;
+								break;
+							}
 						}
 					}
-				}
-			} else {
-				for (int j = 0; j < i; j++) {
-					if (nextInt != CardUtil.cards.length && cards[j] == nextInt) {
-						isRepeated = true;
-						break;
+					if (isKeep) {
+						isKeep = false;
+						continue;
 					}
-				}
-			}
-			if (isRepeated) {
-				isRepeated = false;
-				i--;
-				continue;
-			}
-			cards[i] = (byte) nextInt;
-		}
+					nextInt = RandomUtils.nextInt(0, CardUtil.cards.length) + 1;
+					if (cr.getJokerCount() >= 1) {
+						nextInt = RandomUtils.nextInt(0, CardUtil.cards.length);
+					} else {
+						nextInt = RandomUtils.nextInt(0, CardUtil.cards.length) + 1;
+					}
 
+					if (nextInt == joker) {
+						cr.setJokerCount(cr.getJokerCount() + 1);
+					}
+					compareCardColor = getCardColor(nextInt);
+					compareCardValue = getCardValue(nextInt);
+					if (keepCards != null) {
+						for (int j = 0; j < cards.length; j++) {
+							cardColor = getCardColor(cards[j]);
+							cardValue = getCardValue(cards[j]);
+							if (nextInt != CardUtil.cards.length) {
+								if (cards[j] == nextInt
+								// cardColor == compareCardColor ||
+								// cardValue == compareCardValue
+								) {
+									isRepeated = true;
+									break;
+								}
+							}
+						}
+					} else {
+						for (int j = 0; j < i; j++) {
+							if (nextInt != CardUtil.cards.length && cards[j] == nextInt) {
+								isRepeated = true;
+								break;
+							}
+						}
+					}
+					if (isRepeated) {
+						isRepeated = false;
+						i--;
+						continue;
+					}
+					cards[i] = (byte) nextInt;
+				}
+				
+				if (royalFlush(cards, cr).isWin()) {
+					cr.setWin(false);
+					cr.setKeepCards(null);
+					continue;
+				} else if (fiveOfAKind(cards, cr).isWin()) {
+					cr.setWin(false);
+					cr.setKeepCards(null);
+					continue;
+				} else if (straightFlush(cards, cr).isWin()) {
+					cr.setWin(false);
+					cr.setKeepCards(null);
+					continue;
+				} else if (fourOfAKindJA(cards, cr).isWin()) {
+					if (cr.getWinType() < 10 && r.nextInt(100) < 70) {
+						if (cr.getWinType() == -4) {
+							cr.setKeepCards(null);
+						}
+						cr.setWinType(10);
+						cr.setWin(false);
+						continue;
+					}
+					cr.setWin(false);
+				} else if (fullHouse(cards, cr).isWin()) {
+					if (cr.getWinType() < 10 && r.nextBoolean()) {
+						if (cr.getWinType() == -4) {
+							cr.setKeepCards(null);
+						}
+						cr.setWinType(10);
+						cr.setWin(false);
+						continue;
+					}
+					cr.setWin(false);
+				} else if (flush(cards, cr).isWin()) {
+					if (cr.getWinType() < 10 && r.nextInt(100) < 40) {
+						if (cr.getWinType() == -4) {
+							cr.setKeepCards(null);
+						}
+						cr.setWinType(10);
+						cr.setWin(false);
+						continue;
+					}
+					cr.setWin(false);
+				} else if (straight(cards, cr).isWin()) {
+					if (cr.getWinType() < 10 && r.nextBoolean()) {
+						if (cr.getWinType() == -4) {
+							cr.setKeepCards(null);
+						}
+						cr.setWinType(10);
+						cr.setWin(false);
+						continue;
+					}
+					cr.setWin(false);
+				} else if (threeOfAKind(cards, cr).isWin()) {
+					if (cr.getWinType() < 3 && r.nextInt(100) < 20) {
+						if (cr.getWinType() == -4) {
+							cr.setKeepCards(null);
+						}
+						cr.setWinType(3);
+						cr.setWin(false);
+						continue;
+					}
+					cr.setWin(false);
+				} 
+				else if (twoPairs(cards, cr).isWin()) {
+					if (cr.getWinType() < 2 && r.nextInt(100) < 5) {
+						if (cr.getWinType() == -4) {
+							cr.setKeepCards(null);
+						}
+						cr.setWin(false);
+						cr.setWinType(2);
+						continue;
+					}
+					cr.setWin(false);
+				}
+				else if (sevenBetter(cards, cr).isWin()) {
+					if (cr.getWinType() < 1 && r.nextInt(100) < 30) {
+						if (cr.getWinType() == -4) {
+							cr.setKeepCards(null);
+						}
+						cr.setWin(false);
+						cr.setWinType(1);
+						continue;
+					}
+					cr.setWin(false);
+				} 
+//				else if (fourFlush(cards, cr).isWin()) {
+//					if (cr.getWinType() < -1 && r.nextBoolean()) {
+//						if (cr.getWinType() == -4) {
+//							cr.setKeepCards(null);
+//						}
+//						cr.setWin(false);
+//						continue;
+//					}
+//					cr.setWin(false);
+//				} else if (fourStraight(cards, cr).isWin() || fourStraightThird(cards, cr).isWin() || fourStraightFourth(cards, cr).isWin()) {
+//					if (cr.getWinType() < -2 && r.nextBoolean()) {
+//						if (cr.getWinType() == -4) {
+//							cr.setKeepCards(null);
+//						}
+//						cr.setWin(false);
+//						continue;
+//					}
+//					cr.setWin(false);
+//				}
+				else if (sevenBetterKeep(cards, cr).isWin()) {
+					if (cr.getWinType() < -3 && r.nextInt(100) < 25) {
+						if (cr.getWinType() == -4) {
+							cr.setKeepCards(null);
+						}
+						cr.setWin(false);
+						continue;
+					}
+					cr.setWin(false);
+				}
+				break;
+			}
+		}
 		return cr;
 	}
 
@@ -1487,7 +1795,7 @@ public class CardUtil {
 			System.out.println(Arrays.toString(ArrayUtils.toPrimitive(keepList.toArray(new Byte[keepList.size()]))));
 		}
 		//
-		cardArray = Arrays.copyOf(winPoolFiveBars, cardArray.length);
+		cardArray = Arrays.copyOf(WINPOOLFIVEBARS, cardArray.length);
 
 		randomRemove = RandomUtils.nextInt(0, 5);
 		keepCard = cardArray[randomRemove];
@@ -1511,7 +1819,7 @@ public class CardUtil {
 		}
 		cardArray2[randomRemove] = cr.getKeepCard();
 
-		cardArray = Arrays.copyOf(winPoolRoyalFlush[RandomUtils.nextInt(0, winPoolRoyalFlush.length)], cardArray.length);
+		cardArray = Arrays.copyOf(WINPOOLSTRAIGHTFLUSH[RandomUtils.nextInt(0, WINPOOLSTRAIGHTFLUSH.length)], cardArray.length);
 
 		sameColor = 13 * RandomUtils.nextInt(0, 4);
 		randomRemove = RandomUtils.nextInt(0, 5);
@@ -1533,7 +1841,7 @@ public class CardUtil {
 		cr.setKeepCards(ArrayUtils.toPrimitive(keepList.toArray(new Byte[keepList.size()])));
 		cr.setKeepCard(keepCard);
 
-		cardArray = Arrays.copyOf(winPoolFourOfAKindJoker[RandomUtils.nextInt(0, winPoolFourOfAKindJoker.length)], cardArray.length);
+		cardArray = Arrays.copyOf(WINPOOLFOUROFAKINDJOKER[RandomUtils.nextInt(0, WINPOOLFOUROFAKINDJOKER.length)], cardArray.length);
 
 		randomRemove = RandomUtils.nextInt(0, 4);
 		keepCard = cardArray[randomRemove];

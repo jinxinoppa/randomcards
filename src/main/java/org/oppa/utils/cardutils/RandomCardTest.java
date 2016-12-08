@@ -29,11 +29,15 @@ public class RandomCardTest {
 		JLabel countJL = new JLabel("次数");
 		final CardUtil cu = new CardUtil();
 		final JTextField countjtf = new JTextField(10);
-		
-		JComboBox<String> cards = new JComboBox<String>();
+		JLabel fiveBarsJL = new JLabel("五鬼");
+		JLabel royalFlushJL = new JLabel("同花大顺");
+		JLabel fiveOfAKindJL = new JLabel("五梅");
+		JLabel straightFlushJL = new JLabel("同花小顺");
+		JLabel fourOfAKindJAJokerJL = new JLabel("正宗大四梅");
+//		JComboBox<String> cards = new JComboBox<String>();
 //		cards.addItem("五鬼");
 //		cards.addItem("同花大顺");
-		cards.addItem("同花小顺");
+//		cards.addItem("同花小顺");
 //		cards.addItem("大四梅");
 //		cards.addItem("小四梅");
 //		cards.addItem("葫芦");
@@ -46,9 +50,24 @@ public class RandomCardTest {
 		for (int i = 0; i < 8; i++) {
 			prefab.addItem(i);
 		}
+		final JComboBox<Integer> prefab1 = new JComboBox<Integer>();
+		for (int i = 0; i < 8; i++) {
+			prefab1.addItem(i);
+		}
+		final JComboBox<Integer> prefab2 = new JComboBox<Integer>();
+		for (int i = 0; i < 8; i++) {
+			prefab2.addItem(i);
+		}
+		final JComboBox<Integer> prefab3 = new JComboBox<Integer>();
+		for (int i = 0; i < 8; i++) {
+			prefab3.addItem(i);
+		}
+		final JComboBox<Integer> prefab4 = new JComboBox<Integer>();
+		for (int i = 0; i < 8; i++) {
+			prefab4.addItem(i);
+		}
 		
-		
-		countjtf.setText("10000");
+		countjtf.setText("250000");
 		countjtf.addKeyListener(new KeyListener() {
 
 			public void keyTyped(KeyEvent e) {
@@ -58,7 +77,7 @@ public class RandomCardTest {
 			public void keyReleased(KeyEvent e) {
 				if (e.getKeyCode() == KeyEvent.VK_ENTER) {
 					cta.setText("");
-					cu.printAndExcel(countjtf.getText(), prefab.getSelectedIndex());
+					cu.printAndExcel(countjtf.getText(), prefab.getSelectedIndex(), prefab1.getSelectedIndex(), prefab2.getSelectedIndex(), prefab3.getSelectedIndex(), prefab4.getSelectedIndex());
 //					cu.firstAndSecond(countjtf.getText());
 				}
 			}
@@ -72,19 +91,27 @@ public class RandomCardTest {
 
 			public void actionPerformed(ActionEvent e) {
 				cta.setText("");
-				cu.printAndExcel(countjtf.getText(), prefab.getSelectedIndex());
+				cu.printAndExcel(countjtf.getText(), prefab.getSelectedIndex(), prefab1.getSelectedIndex(), prefab2.getSelectedIndex(), prefab3.getSelectedIndex(), prefab4.getSelectedIndex());
 //				cu.firstAndSecond(countjtf.getText());
 			}
 		});
 		northJP.add(countJL);
 		northJP.add(countjtf);
 
-		northJP.add(cards);
+		northJP.add(fiveBarsJL);
 		northJP.add(prefab);
-
+		northJP.add(royalFlushJL);
+		northJP.add(prefab1);
+		northJP.add(fiveOfAKindJL);
+		northJP.add(prefab2);
+		northJP.add(straightFlushJL);
+		northJP.add(prefab3);
+		northJP.add(fourOfAKindJAJokerJL);
+		northJP.add(prefab4);
+		
 		northJP.add(jb);
 
-		jf.setSize(400, 400);
+		jf.setSize(800, 600);
 		jf.setResizable(true);
 		jf.setVisible(true);
 		jf.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
