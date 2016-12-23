@@ -26,6 +26,7 @@ public class RandomCardTest {
 		northJP.setPreferredSize(new Dimension(800, 100));
 		northJP.setVisible(true);
 		final ConsoleTextArea cta = new ConsoleTextArea();
+		cta.setEditable(false);
 		jf.add(northJP, BorderLayout.NORTH);
 		jf.add(new JScrollPane(cta), BorderLayout.CENTER);
 		JLabel countJL = new JLabel("次数");
@@ -36,8 +37,10 @@ public class RandomCardTest {
 		JLabel fiveOfAKindJL = new JLabel("五梅");
 		JLabel straightFlushJL = new JLabel("同花小顺");
 		JLabel fourOfAKindJAJokerJL = new JLabel("正宗大四梅");
-		JLabel fourOfAKindJAJL = new JLabel("大四梅");
-		JLabel fourOfAKindTwoTenJL = new JLabel("小四梅");
+		JLabel fourOfAKindjaJL = new JLabel("大四梅出现率");
+		JLabel fourOfAKindJAJL = new JLabel("大四梅累积率");
+		JLabel fourOfAKindTwoTenJL = new JLabel("小四梅出现率");
+		JLabel fourOfAKindTTJL = new JLabel("小四梅累积率");
 		JLabel fullHouseJL = new JLabel("葫芦");
 		JLabel flushJL = new JLabel("同花");
 		JLabel straightJL = new JLabel("顺子");
@@ -47,6 +50,8 @@ public class RandomCardTest {
 		JLabel fourFlushJL = new JLabel("四张同花");
 		JLabel fourStraightJL = new JLabel("四张顺");
 		JLabel sevenBetterKeepJL = new JLabel("小对");
+		JLabel jokerJL = new JLabel("鬼牌");
+		JLabel fourOfAKindTwoTenTwoJL = new JLabel("小四梅连庄");
 		final JComboBox<Integer> prefab = new JComboBox<Integer>();
 		for (int i = 0; i < 8; i++) {
 			prefab.addItem(i);
@@ -111,6 +116,22 @@ public class RandomCardTest {
 		for (int i = 0; i < 8; i++) {
 			prefab15.addItem(i);
 		}
+		final JComboBox<Integer> prefab16 = new JComboBox<Integer>();
+		for (int i = 0; i < 8; i++) {
+			prefab16.addItem(i);
+		}
+		final JComboBox<Integer> prefab17 = new JComboBox<Integer>();
+		for (int i = 0; i < 8; i++) {
+			prefab17.addItem(i);
+		}
+		final JComboBox<Integer> prefab18 = new JComboBox<Integer>();
+		for (int i = 0; i < 8; i++) {
+			prefab18.addItem(i);
+		}
+//		final JComboBox<Integer> prefab19 = new JComboBox<Integer>();
+//		for (int i = 0; i < 8; i++) {
+//			prefab19.addItem(i);
+//		}
 		
 		countjtf.setText("250000");
 		countjtf.addKeyListener(new KeyListener() {
@@ -124,7 +145,10 @@ public class RandomCardTest {
 					cta.setText("");
 					cu.printAndExcel(countjtf.getText(), prefab.getSelectedIndex(), prefab1.getSelectedIndex(), prefab2.getSelectedIndex(), prefab3.getSelectedIndex(), prefab4.getSelectedIndex(), 
 							prefab5.getSelectedIndex(), prefab6.getSelectedIndex(), prefab7.getSelectedIndex(), prefab8.getSelectedIndex(), prefab9.getSelectedIndex(), prefab10.getSelectedIndex(), 
-							prefab11.getSelectedIndex(), prefab12.getSelectedIndex(), prefab13.getSelectedIndex(), prefab14.getSelectedIndex(), prefab15.getSelectedIndex());
+							prefab11.getSelectedIndex(), prefab12.getSelectedIndex(), prefab13.getSelectedIndex(), prefab14.getSelectedIndex(), prefab15.getSelectedIndex(), prefab16.getSelectedIndex(), 
+							prefab17.getSelectedIndex(), prefab18.getSelectedIndex()
+//							, prefab19.getSelectedIndex()
+							);
 //					cu.firstAndSecond(countjtf.getText());
 				}
 			}
@@ -140,7 +164,10 @@ public class RandomCardTest {
 				cta.setText("");
 				cu.printAndExcel(countjtf.getText(), prefab.getSelectedIndex(), prefab1.getSelectedIndex(), prefab2.getSelectedIndex(), prefab3.getSelectedIndex(), prefab4.getSelectedIndex(),
 						prefab5.getSelectedIndex(), prefab6.getSelectedIndex(), prefab7.getSelectedIndex(), prefab8.getSelectedIndex(), prefab9.getSelectedIndex(), prefab10.getSelectedIndex(), 
-						prefab11.getSelectedIndex(), prefab12.getSelectedIndex(), prefab13.getSelectedIndex(), prefab14.getSelectedIndex(), prefab15.getSelectedIndex());
+						prefab11.getSelectedIndex(), prefab12.getSelectedIndex(), prefab13.getSelectedIndex(), prefab14.getSelectedIndex(), prefab15.getSelectedIndex(), prefab16.getSelectedIndex(), 
+						prefab17.getSelectedIndex(), prefab18.getSelectedIndex()
+//						,prefab19.getSelectedIndex()
+						);
 //				cu.firstAndSecond(countjtf.getText());
 			}
 		});
@@ -158,7 +185,7 @@ public class RandomCardTest {
 		northJP.add(fourOfAKindJAJokerJL);
 		northJP.add(prefab4);
 		
-		northJP.add(fourOfAKindJAJL);
+		northJP.add(fourOfAKindjaJL);
 		northJP.add(prefab5);
 		northJP.add(fourOfAKindTwoTenJL);
 		northJP.add(prefab6);
@@ -180,10 +207,18 @@ public class RandomCardTest {
 		northJP.add(prefab14);
 		northJP.add(sevenBetterKeepJL);
 		northJP.add(prefab15);
+		northJP.add(jokerJL);
+		northJP.add(prefab16);
+		northJP.add(fourOfAKindJAJL);
+		northJP.add(prefab17);
+		northJP.add(fourOfAKindTTJL);
+		northJP.add(prefab18);
+//		northJP.add(fourOfAKindTwoTenTwoJL);
+//		northJP.add(prefab19);
 		
 		northJP.add(jb);
 
-		jf.setSize(780, 600);
+		jf.setSize(820, 600);
 		jf.setResizable(true);
 		jf.setVisible(true);
 		jf.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);

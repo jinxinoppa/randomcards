@@ -1,6 +1,7 @@
 package org.oppa.utils.cardutils;
 
-import java.security.MessageDigest;
+import java.util.ArrayList;
+import java.util.List;
 
 public class CardResult {
 	private int winType = 0;
@@ -16,42 +17,18 @@ public class CardResult {
 	private int jokerCount = 0;
 	private byte keepCard = 0;
 	private byte replaceCard = 0;
+	private List<Integer> halfWin = new ArrayList<Integer>();
 
-	public static String shaEncode(String inStr) throws Exception {
-		MessageDigest sha = null;
-		try {
-			sha = MessageDigest.getInstance("SHA");
-		} catch (Exception e) {
-			System.out.println(e.toString());
-			e.printStackTrace();
-			return "";
-		}
-
-		byte[] byteArray = inStr.getBytes("UTF-8");
-		byte[] md5Bytes = sha.digest(byteArray);
-		StringBuffer hexValue = new StringBuffer();
-		for (int i = 0; i < md5Bytes.length; i++) {
-			int val = ((int) md5Bytes[i]) & 0xff;
-			if (val < 16) {
-				hexValue.append("0");
-			}
-			hexValue.append(Integer.toHexString(val));
-		}
-		return hexValue.toString();
-	}
-
-	/**
-	 * 测试主函数
-	 * 
-	 * @param args
-	 * @throws Exception
-	 */
-	public static void main(String args[]) throws Exception {
-		String str = new String("amigoxiexiexingxing");
-		System.out.println("原始：" + str);
-		System.out.println("SHA后：" + shaEncode(str));
-	}
-
+	private int passScore = 0;// 缓存过关彩金
+	private int passMath = 0;// 过关次数
+	private int winType2 = 0;
+	
+	private String betType="";
+	private int betScore=0;
+	private String guardCard="";
+	private String oneCard="";
+	
+	
 	public int getStartIndex() {
 		return startIndex;
 	}
@@ -65,13 +42,32 @@ public class CardResult {
 		setWin(0);
 		setWinCount(0);
 		setGiftWin(0);
+		halfWin.clear();
+	}
+
+	
+	
+	public String getGuardCard() {
+		return guardCard;
+	}
+
+	public void setGuardCard(String guardCard) {
+		this.guardCard = guardCard;
+	}
+
+	public String getBetType() {
+		return betType;
+	}
+
+	public void setBetType(String betType) {
+		this.betType = betType;
 	}
 
 	public int getWinType() {
 		return winType;
 	}
 
-	void setWinType(int winType) {
+	public void setWinType(int winType) {
 		this.winType = winType;
 	}
 
@@ -79,7 +75,7 @@ public class CardResult {
 		return cards;
 	}
 
-	void setCards(byte[] cards) {
+	public void setCards(byte[] cards) {
 		this.cards = cards;
 	}
 
@@ -167,4 +163,53 @@ public class CardResult {
 	public void setReplaceCard(byte replaceCard) {
 		this.replaceCard = replaceCard;
 	}
+
+	public List<Integer> getHalfWin() {
+		return halfWin;
+	}
+
+	public void setHalfWin(List<Integer> halfWin) {
+		this.halfWin = halfWin;
+	}
+
+	public int getPassScore() {
+		return passScore;
+	}
+
+	public void setPassScore(int passScore) {
+		this.passScore = passScore;
+	}
+
+	public int getPassMath() {
+		return passMath;
+	}
+
+	public void setPassMath(int passMath) {
+		this.passMath = passMath;
+	}
+
+	public int getWinType2() {
+		return winType2;
+	}
+
+	public void setWinType2(int winType2) {
+		this.winType2 = winType2;
+	}
+
+	public int getBetScore() {
+		return betScore;
+	}
+
+	public void setBetScore(int betScore) {
+		this.betScore = betScore;
+	}
+
+	public String getOneCard() {
+		return oneCard;
+	}
+
+	public void setOneCard(String oneCard) {
+		this.oneCard = oneCard;
+	}
+
 }
