@@ -63,19 +63,22 @@ public class CardUtil {
 	public final static String[] random5 = new String[]{"25,30", "30,35", "35,40", "40,45", "45,50", "50,55", "55,60", "100,100"};
 	public final static String[] random7 = new String[]{"35,20", "40,25", "45,30", "50,35", "55,40", "60,45", "65,50", "100,100"};
 	public final static String[] random10 = new String[]{"75,30", "80,35", "85,40", "90,45", "95,50", "95,55", "95,60", "100,100"};
-	public final static String[] random50 = new String[]{"60,65", "65,70", "70,75", "7500,8255", "80,85", "85,90", "90,95", "100,100"};
-	public final static String[] random79 = new String[]{"65,70", "70,75", "75,80", "8000,8755", "85,90", "90,95", "95,99", "100,100"};
+	public final static String[] random50 = new String[]{"60,65", "65,70", "70,75", "75,80", "80,85", "85,90", "90,95", "100,100"};
+	public final static String[] random79 = new String[]{"65,70", "70,75", "75,80", "80,85", "85,90", "90,95", "95,99", "100,100"};
 	public final static String[] random9999 = new String[]{"99,99", "80,80", "60,60", "40,40", "20,20", "10,10", "1,1", "100,100"};
+	public final static String[] random9997 = new String[]{"5,12", "5,12", "5,12", "5,12", "4,10", "4,9", "4,7", "3,6"};
+	public final static String[] random9998 = new String[]{"2,5", "2,5", "2,5", "2,5", "2,5", "2,5", "2,5", "100,100"};
 	
 	public final static List<FivepkPrefab> fivepkPrefabList = new ArrayList<FivepkPrefab>(5);
 	static {
-		fivepkPrefabList.add(new FivepkPrefab(49, 70, 60, 50, 40, 20, 15, 10, 0));
-		fivepkPrefabList.add(new FivepkPrefab(78, 50, 40, 30, 25, 20, 15, 10, 0));
+		fivepkPrefabList.add(new FivepkPrefab(48, "20,23", "17,19", "14,16", "11,13", "8,10", "5,7", "2,4", "0"));
+		fivepkPrefabList.add(new FivepkPrefab(49, "70", "60", "50", "40", "20", "15", "10", "0"));
+		fivepkPrefabList.add(new FivepkPrefab(78, "50", "40", "30", "25", "20", "15", "10", "0"));
 //		fivepkPrefabList.add(new FivepkPrefab(80, 5, 30, 26, 20, 16, 12, 4, 0));
-		fivepkPrefabList.add(new FivepkPrefab(120, 5, 30, 26, 20, 16, 12, 4, 0));
-		fivepkPrefabList.add(new FivepkPrefab(250, 5, 16, 14, 12, 10, 6, 2, 0));
-		fivepkPrefabList.add(new FivepkPrefab(500, 5, 16, 14, 12, 10, 6, 2, 0));
-		fivepkPrefabList.add(new FivepkPrefab(1000, 5, 26, 20, 10, 12, 8, 4, 0));
+		fivepkPrefabList.add(new FivepkPrefab(120, "5", "30", "26", "20", "16", "12", "4", "0"));
+		fivepkPrefabList.add(new FivepkPrefab(250, "5", "16", "14", "12", "10", "6", "2", "0"));
+		fivepkPrefabList.add(new FivepkPrefab(500, "5", "16", "14", "12", "10", "6", "2", "0"));
+		fivepkPrefabList.add(new FivepkPrefab(1000, "5", "26", "20", "10", "12", "8", "4", "0"));
 	}
 
 	public final static Map<String, Map<Integer, Double>> RANDOMBUFF = new HashMap<String, Map<Integer, Double>>();
@@ -562,12 +565,18 @@ public class CardUtil {
 		fivepkSeoId.setPrefabJoker((byte)prefabs[16]);
 		fivepkSeoId.setPrefabFourOfAKindJA((byte)prefabs[17]);
 		fivepkSeoId.setPrefabFourOfAKindTT((byte)prefabs[18]);
-//		fivepkSeoId.setPrefabFourOfAKindTwoTenTwo((byte)prefabs[19]);
+		fivepkSeoId.setPrefabFourOfAKindTwoTenTwo((byte)prefabs[19]);
+		fivepkSeoId.setPrefabForceSevenBetter((byte)prefabs[20]);
 		List<CardResult> secondList = new ArrayList<CardResult>();
 		int prefab = 0;
+		int loseCount = 0;
+		String[] prefabRandomArray = random9998[fivepkSeoId.getPrefabForceSevenBetter()].split(",");
+		fivepkSeoId.setPrefabForceSevenBetterCount((byte) RandomUtils.nextInt(Integer.parseInt(prefabRandomArray[0]), Integer.parseInt(prefabRandomArray[1])));
+		int forceSevenBetterCount = fivepkSeoId.getPrefabForceSevenBetterCount();
 		for (int i = 1; i < totalCount + 1; i++) {
+			fivepkSeoId.setSeoMachinePlayCount(fivepkSeoId.getSeoMachinePlayCount() + 1);
 			CardResult cr = new CardResult();
-
+			
 			for (int i1 = 0; i1 < fivepkPrefabList.size(); i1++) {
 				FivepkPrefab fivepkPrefab = fivepkPrefabList.get(i1);
 				prefab = fivepkSeoId.getPrefab(fivepkPrefab.getPrefabCards());
@@ -579,7 +588,7 @@ public class CardUtil {
 					totalWinCount = (int) (1000 * fivepkPrefab.getPrefabCards());
 				}
 				if (fivepkPrefab.getPrefabCards() != 80 && fivepkPrefab.getPrefabCards() != 48) {
-					prefab = fivepkPrefab.getPrefab(prefab);
+					prefab = Integer.parseInt(fivepkPrefab.getPrefab(prefab));
 					if (prefab == 0) {
 						continue;
 					}
@@ -587,7 +596,44 @@ public class CardUtil {
 					prefab = 5;
 				}
 				winCount = prefab;
-				if (fivepkPrefab.getPrefabCards() == 49) {
+				if (fivepkPrefab.getPrefabCards() == 48) {
+					if (fivepkSeoId.getPrefab(fivepkPrefab.getPrefabCards()) == 7){
+						continue;
+					}
+					String[] continueArr = null;
+					if (fivepkSeoId.getPrefabFourOfAKindTwoTenContinue() == null || fivepkSeoId.getPrefabFourOfAKindTwoTenContinue().isEmpty()){
+						prefab = fivepkSeoId.getPrefab(fivepkPrefab.getPrefabCards());
+						continueArr = fivepkPrefab.getPrefab(prefab).split(",");
+						int randomQuantity = RandomUtils.nextInt(Integer.parseInt(continueArr[0]), Integer.parseInt(continueArr[1]));
+						StringBuffer sb = new StringBuffer();
+						long randomSeoMachinePlayCount = RandomUtils.nextLong(fivepkSeoId.getSeoMachinePlayCount(), fivepkSeoId.getSeoMachinePlayCount() + 20);
+						sb.append(randomSeoMachinePlayCount).append(",");
+						for (int j = 1; j < randomQuantity; j++) {
+							randomSeoMachinePlayCount = RandomUtils.nextLong(randomSeoMachinePlayCount + 1, randomSeoMachinePlayCount + 20);
+							sb.append(randomSeoMachinePlayCount).append(",");
+						}
+						sb.deleteCharAt(sb.lastIndexOf(","));
+						fivepkSeoId.setPrefabFourOfAKindTwoTenContinue(sb.toString());
+					}
+					boolean isBreak = false;
+					continueArr = fivepkSeoId.getPrefabFourOfAKindTwoTenContinue().split(",");
+					String win = null;
+					for (int j = 0; j < continueArr.length; j++) {
+						win = continueArr[j];
+						if (fivepkSeoId.getSeoMachinePlayCount() == Integer.parseInt(win)) {
+							cr.setWinType(fivepkPrefab.getPrefabCards() + 1);
+							isBreak = true;
+							if (j + 1 == continueArr.length){
+								fivepkSeoId.setPrefabFourOfAKindTwoTenContinue("");
+								fivepkSeoId.setPrefabFourOfAKindTwoTenTwo((byte)7);
+							}
+							break;
+						}
+					}
+					if (isBreak){
+						break;
+					}
+				} else if (fivepkPrefab.getPrefabCards() == 49) {
 					fivepkSeoId.setPrefabFourOfAKindTTCount(fivepkSeoId.getPrefabFourOfAKindTTCount() + winCount);
 					if (fivepkSeoId.getPrefabFourOfAKindTTCount() >= totalWinCount) {
 						cr.setWinType(fivepkPrefab.getPrefabCards());
@@ -602,31 +648,44 @@ public class CardUtil {
 						break;
 					}
 				} else if (fivepkPrefab.getPrefabCards() == 80) {
-					if (prefab == 5) {
-						Map<Integer, Double> prefabBuffMap = RANDOMBUFF.get(machineId);
-						if (prefabBuffMap == null) {
-							prefabBuffMap = new HashMap<Integer, Double>();
-							RANDOMBUFF.put(machineId, prefabBuffMap);
-						}
-						Double randomBuff = prefabBuffMap.get(fivepkPrefab.getPrefabCards());
-						if (randomBuff == null) {
-							randomBuff = FIVEPREFAB[RandomUtils.nextInt(0, 6)];
-							prefabBuffMap.put(fivepkPrefab.getPrefabCards(), randomBuff);
-							plusWinCount = (int) ((1000 * fivepkPrefab.getPrefabCards() * randomBuff));
-							fivepkSeoId.setPrefabFourOfAKindJokerCount(plusWinCount);
-						}
-					} else {
-						Map<Integer, Double> prefabBuffMap = RANDOMBUFF.get(machineId);
-						if (prefabBuffMap != null) {
-							prefabBuffMap.remove(fivepkPrefab.getPrefabCards());
-						}
-					}
-					fivepkSeoId.setPrefabFourOfAKindJokerCount(fivepkSeoId.getPrefabFourOfAKindJokerCount() + winCount);
-					if (fivepkSeoId.getPrefabFourOfAKindJokerCount() >= totalWinCount) {
-						cr.setWinType(fivepkPrefab.getPrefabCards());
+					prefab = fivepkSeoId.getPrefab(fivepkPrefab.getPrefabCards());
+					if (prefab == 7){
 						fivepkSeoId.setPrefabFourOfAKindJokerCount(0);
+						continue;
+					}
+					prefab = Integer.parseInt(fivepkPrefab.getPrefab(prefab).split(",")[0]);
+					if (fivepkSeoId.getPrefabFourOfAKindJokerCount() == 0 && prefab != 0){
+						fivepkSeoId.setPrefabFourOfAKindJokerCount(fivepkSeoId.getSeoMachinePlayCount() + 10);
+					}
+					if (fivepkSeoId.getPrefabFourOfAKindJokerCount() == fivepkSeoId.getSeoMachinePlayCount()) {
+						cr.setWinType(fivepkPrefab.getPrefabCards());
 						break;
 					}
+//					if (prefab == 5) {
+//						Map<Integer, Double> prefabBuffMap = RANDOMBUFF.get(machineId);
+//						if (prefabBuffMap == null) {
+//							prefabBuffMap = new HashMap<Integer, Double>();
+//							RANDOMBUFF.put(machineId, prefabBuffMap);
+//						}
+//						Double randomBuff = prefabBuffMap.get(fivepkPrefab.getPrefabCards());
+//						if (randomBuff == null) {
+//							randomBuff = FIVEPREFAB[RandomUtils.nextInt(0, 6)];
+//							prefabBuffMap.put(fivepkPrefab.getPrefabCards(), randomBuff);
+//							plusWinCount = (int) ((1000 * fivepkPrefab.getPrefabCards() * randomBuff));
+//							fivepkSeoId.setPrefabFourOfAKindJokerCount(plusWinCount);
+//						}
+//					} else {
+//						Map<Integer, Double> prefabBuffMap = RANDOMBUFF.get(machineId);
+//						if (prefabBuffMap != null) {
+//							prefabBuffMap.remove(fivepkPrefab.getPrefabCards());
+//						}
+//					}
+//					fivepkSeoId.setPrefabFourOfAKindJokerCount(fivepkSeoId.getPrefabFourOfAKindJokerCount() + winCount);
+//					if (fivepkSeoId.getPrefabFourOfAKindJokerCount() >= totalWinCount) {
+//						cr.setWinType(fivepkPrefab.getPrefabCards());
+//						fivepkSeoId.setPrefabFourOfAKindJokerCount(0);
+//						break;
+//					}
 				} else if (fivepkPrefab.getPrefabCards() == 120) {
 					if (prefab == 5) {
 						Map<Integer, Double> prefabBuffMap = RANDOMBUFF.get(machineId);
@@ -763,6 +822,12 @@ public class CardUtil {
 				cardArray = Arrays.copyOf(WINPOOLFIVEBARS, cardArray.length);
 				cr.setCards(cardArray);
 				cr.setKeepCards(new byte[]{0, 1, 2, 3, 4});
+			}  else if (loseCount > forceSevenBetterCount){
+				loseCount = 0;
+				cardArray = new byte[]{1, 14,2,3,4};
+				cr.setCards(cardArray);
+				cr.setKeepCards(new byte[]{0, 1, 2, 3, 4});
+				cr.setWinType2(99);
 			} else {
 				cardArray = CardUtil.firstRandomCards1(cr, prefabs[5],
 						prefabs[6],prefabs[7],prefabs[8],prefabs[9],
@@ -842,21 +907,25 @@ public class CardUtil {
 				cr.setWin(false);
 				cr.setWinType(-1);
 				fourFlush++;
+				loseCount++;
 //				appendCards(cardArray, getHSSFSheet(workbook, "四张同花"), columnIndex, fourFlush);
 			} else if (fourStraight(cardArray, cr).isWin() || fourStraightThird(cardArray, cr).isWin() || fourStraightFourth(cardArray, cr).isWin()) {
 				cr.setWin(false);
 				cr.setWinType(-2);
 				fourStraight++;
+				loseCount++;
 //				appendCards(cardArray, getHSSFSheet(workbook, "四张顺"), columnIndex, fourStraight);
 			} else if (sevenBetterKeep(cardArray, cr).isWin()) {
 				cr.setWin(false);
 				cr.setWinType(-3);
 				smallSevenBetterCount++;
+				loseCount++;
 //				appendCards(cardArray, getHSSFSheet(workbook, "小一对"), columnIndex, fourStraight);
 			} else {
 				cr.setWin(false);
 				cr.setWinType(-4);
 				failCount++;
+				loseCount++;
 //				appendCards(cardArray, getHSSFSheet(workbook, "乌龙"), columnIndex, failCount);
 			}
 		}
@@ -961,10 +1030,6 @@ public class CardUtil {
 				cr.setWin(false);
 				sevenBetterCount++;
 //				appendCards(cardArray, getHSSFSheet(workbook, "大一对"), columnIndex, sevenBetterCount);
-			} else if (sevenBetterKeep(cardArray, cr).isWin()) {
-				cr.setWin(false);
-				smallSevenBetterCount++;
-//				appendCards(cardArray, getHSSFSheet(workbook, "小一对"), columnIndex, fourStraight);
 			} else if (fourFlush(cardArray, cr).isWin()) {
 				cr.setWin(false);
 				fourFlush++;
@@ -973,6 +1038,10 @@ public class CardUtil {
 				cr.setWin(false);
 				fourStraight++;
 //				appendCards(cardArray, getHSSFSheet(workbook, "四张顺"), columnIndex, fourStraight);
+			} else if (sevenBetterKeep(cardArray, cr).isWin()) {
+				cr.setWin(false);
+				smallSevenBetterCount++;
+//				appendCards(cardArray, getHSSFSheet(workbook, "小一对"), columnIndex, fourStraight);
 			} else {
 				cr.setWin(false);
 				failCount++;
@@ -1073,8 +1142,8 @@ public class CardUtil {
 		while (true) {
 			cardArray = new byte[5];
 			for (int i = 0; i < cardArray.length; i++) {
-				int jokerRandom9999 = Integer.parseInt(random9999[4].split(",")[0]);
-				if (jokerRandom9999 != 100 && cr.getJokerCount() <= 0 && r.nextInt(1060) < jokerRandom9999) {
+				int jokerRandom9999 = Integer.parseInt(random9999[prefabs[11]].split(",")[0]);
+				if (jokerRandom9999 != 100 && cr.getJokerCount() <= 0 && r.nextInt(106) < jokerRandom9999) {
 					newCardValue = joker;
 					cr.setJokerCount(cr.getJokerCount() + 1);
 				} else {
@@ -1118,56 +1187,56 @@ public class CardUtil {
 				cr.setKeepCards(null);
 				continue;
 			} else if (fourOfAKindJA(cardArray, cr).isWin()) {
-				if (r.nextInt(10000) < Integer.parseInt(random79[3].split(",")[0])){
+				if (r.nextInt(100) < Integer.parseInt(random79[prefabs[0]].split(",")[0])){
 					cr.setWin(false);
 					cr.setKeepCards(null);
 					cr.setJokerCount(0);
 					continue;
 				}
 			} else if (fourOfAKindTwoTen(cardArray, cr).isWin()) {
-				if (r.nextInt(10000) < Integer.parseInt(random50[3].split(",")[0])){
+				if (r.nextInt(100) < Integer.parseInt(random50[prefabs[1]].split(",")[0])){
 					cr.setWin(false);
 					cr.setKeepCards(null);
 					cr.setJokerCount(0);
 					continue;
 				}
 			} else if (fullHouse(cardArray, cr).isWin()) {
-				if (r.nextInt(100) < Integer.parseInt(random10[4].split(",")[0])){
+				if (r.nextInt(100) < Integer.parseInt(random10[prefabs[2]].split(",")[0])){
 					cr.setWin(false);
 					cr.setKeepCards(null);
 					cr.setJokerCount(0);
 					continue;
 				}
 			} else if (flush(cardArray, cr).isWin()) {
-				if (r.nextInt(100) < Integer.parseInt(random7[4].split(",")[0])){
+				if (r.nextInt(100) < Integer.parseInt(random7[prefabs[3]].split(",")[0])){
 					cr.setWin(false);
 					cr.setKeepCards(null);
 					cr.setJokerCount(0);
 					continue;
 				}
 			} else if (straight(cardArray, cr).isWin()) {
-				if (r.nextInt(100) < Integer.parseInt(random5[4].split(",")[0])){
+				if (r.nextInt(100) < Integer.parseInt(random5[prefabs[4]].split(",")[0])){
 					cr.setWin(false);
 					cr.setKeepCards(null);
 					cr.setJokerCount(0);
 					continue;
 				}
 			} else if (threeOfAKind(cardArray, cr).isWin()) {
-				if (r.nextInt(100) < Integer.parseInt(random3[4].split(",")[0])){
+				if (r.nextInt(100) < Integer.parseInt(random3[prefabs[5]].split(",")[0])){
 					cr.setWin(false);
 					cr.setKeepCards(null);
 					cr.setJokerCount(0);
 					continue;
 				}
 			} else if (sevenBetter(cardArray, cr).isWin()) {
-				if (r.nextInt(100) < Integer.parseInt(random1[4].split(",")[0])){
+				if (r.nextInt(100) < Integer.parseInt(random1[prefabs[7]].split(",")[0])){
 					cr.setWin(false);
 					cr.setKeepCards(null);
 					cr.setJokerCount(0);
 					continue;
 				}
 			} else if (sevenBetterKeep(cardArray, cr).isWin()) {
-				if (r.nextInt(100) < Integer.parseInt(randomNegative3[4].split(",")[0])){
+				if (r.nextInt(100) < Integer.parseInt(randomNegative3[prefabs[10]].split(",")[0])){
 					cr.setWin(false);
 					cr.setKeepCards(null);
 					cr.setJokerCount(0);
@@ -1219,8 +1288,8 @@ public class CardUtil {
 						isKeep = false;
 						continue;
 					}
-					int jokerRandom9999 = Integer.parseInt(random9999[4].split(",")[1]);
-					if (jokerRandom9999 != 100 && cr.getJokerCount() <= 0 && r.nextInt(1060) < jokerRandom9999) {
+					int jokerRandom9999 = Integer.parseInt(random9999[prefabs[11]].split(",")[1]);
+					if (jokerRandom9999 != 100 && cr.getJokerCount() <= 0 && r.nextInt(106) < jokerRandom9999) {
 						newCardValue = joker;
 						cr.setJokerCount(cr.getJokerCount() + 1);
 					} else {
@@ -1286,92 +1355,92 @@ public class CardUtil {
 					keepCards = null;
 					continue;
 				} else if (fourOfAKindJA(cards, cr).isWin()) {
-					if (r.nextInt(10000) < Integer.parseInt(random79[3].split(",")[1])) {
+					if (r.nextInt(100) < Integer.parseInt(random79[prefabs[0]].split(",")[1])) {
 						if (cr.getWinType() == -4) {
 							cr.setKeepCards(null);
 							keepCards = null;
 						}
-						cr.setWinType(79);
+//						cr.setWinType(79);
 						cr.setWin(false);
 						continue;
 					}
 					cr.setWin(false);
 				} else if (fourOfAKindTwoTen(cards, cr).isWin()) {
-					if (r.nextInt(10000) < Integer.parseInt(random50[3].split(",")[1])) {
+					if (r.nextInt(100) < Integer.parseInt(random50[prefabs[1]].split(",")[1])) {
 						if (cr.getWinType() == -4) {
 							cr.setKeepCards(null);
 							keepCards = null;
 						}
-						cr.setWinType(50);
+//						cr.setWinType(50);
 						cr.setWin(false);
 						continue;
 					}
 					cr.setWin(false);
 				} else if (fullHouse(cards, cr).isWin()) {
-					if (cr.getWinType() < 10 && r.nextInt(100) < Integer.parseInt(random10[4].split(",")[1])) {
+					if (cr.getWinType() <= 10 && r.nextInt(100) < Integer.parseInt(random10[prefabs[2]].split(",")[1])) {
 						if (cr.getWinType() == -4) {
 							cr.setKeepCards(null);
 							keepCards = null;
 						}
-						cr.setWinType(10);
+//						cr.setWinType(10);
 						cr.setWin(false);
 						continue;
 					}
 					cr.setWin(false);
 				} else if (flush(cards, cr).isWin()) {
-					if (cr.getWinType() < 10 && r.nextInt(100) < Integer.parseInt(random7[4].split(",")[1])) {
+					if (cr.getWinType() <= 10 && r.nextInt(100) < Integer.parseInt(random7[prefabs[3]].split(",")[1])) {
 						if (cr.getWinType() == -4) {
 							cr.setKeepCards(null);
 							keepCards = null;
 						}
-						cr.setWinType(7);
+//						cr.setWinType(7);
 						cr.setWin(false);
 						continue;
 					}
 					cr.setWin(false);
 				} else if (straight(cards, cr).isWin()) {
-					if (cr.getWinType() < 10 && r.nextInt(100) < Integer.parseInt(random5[4].split(",")[1])) {
+					if (cr.getWinType() <= 10 && r.nextInt(100) < Integer.parseInt(random5[prefabs[4]].split(",")[1])) {
 						if (cr.getWinType() == -4) {
 							cr.setKeepCards(null);
 							keepCards = null;
 						}
-						cr.setWinType(5);
+//						cr.setWinType(5);
 						cr.setWin(false);
 						continue;
 					}
 					cr.setWin(false);
 				} else if (threeOfAKind(cards, cr).isWin()) {
-					if (cr.getWinType() < 3 && r.nextInt(100) < Integer.parseInt(random3[4].split(",")[1])) {
+					if (cr.getWinType() <= 3 && r.nextInt(100) < Integer.parseInt(random3[prefabs[5]].split(",")[1])) {
 						if (cr.getWinType() == -4) {
 							cr.setKeepCards(null);
 							keepCards = null;
 						}
-						cr.setWinType(3);
+//						cr.setWinType(3);
 						cr.setWin(false);
 						continue;
 					}
 					cr.setWin(false);
 				} 
 				else if (twoPairs(cards, cr).isWin()) {
-					if (cr.getWinType() < 2 && r.nextInt(100) < Integer.parseInt(random2[4].split(",")[1])) {
+					if (cr.getWinType() <= 2 && r.nextInt(100) < Integer.parseInt(random2[prefabs[6]].split(",")[1])) {
 						if (cr.getWinType() == -4) {
 							cr.setKeepCards(null);
 							keepCards = null;
 						}
 						cr.setWin(false);
-						cr.setWinType(2);
+//						cr.setWinType(2);
 						continue;
 					}
 					cr.setWin(false);
 				}
 				else if (sevenBetter(cards, cr).isWin()) {
-					if (cr.getWinType() < 1 && r.nextInt(100) < Integer.parseInt(random1[4].split(",")[1])) {
+					if (cr.getWinType() <= 1 && r.nextInt(100) < Integer.parseInt(random1[prefabs[7]].split(",")[1])) {
 						if (cr.getWinType() == -4) {
 							cr.setKeepCards(null);
 							keepCards = null;
 						}
 						cr.setWin(false);
-						cr.setWinType(1);
+//						cr.setWinType(1);
 						continue;
 					}
 					cr.setWin(false);
@@ -1396,7 +1465,7 @@ public class CardUtil {
 //					cr.setWin(false);
 //				}
 				else if (sevenBetterKeep(cards, cr).isWin()) {
-					if (cr.getWinType() < -3 && r.nextInt(100) < Integer.parseInt(randomNegative3[prefabs[10]].split(",")[1])) {
+					if (r.nextInt(100) < Integer.parseInt(randomNegative3[prefabs[10]].split(",")[1])) {
 						if (cr.getWinType() == -4) {
 							cr.setKeepCards(null);
 							keepCards = null;
@@ -1559,22 +1628,22 @@ public class CardUtil {
 		cr.setCards(new byte[]{4, 12, 3, 1, 13});// fixed
 		cr.setCards(new byte[]{11, 13, 1, 2, 10});// fixed
 		cr.setCards(new byte[]{32, 19, 20, 23, 53});// fixed
-//		System.out.println(fourStraight(cr.getCards(), cr).isWin());
-//		System.out.println(Arrays.toString(cr.getKeepCards()));
-//		cr.setWin(false);
-//		cr.setKeepCards(null);
-		// System.out.println(fourStraightSecond(cr.getCards(), cr).isWin());
-		// System.out.println(Arrays.toString(cr.getKeepCards()));
-		// cr.setWin(false);
-		// cr.setKeepCards(null);
-//		System.out.println(fourStraightThird(cr.getCards(), cr).isWin());
-//		System.out.println(Arrays.toString(cr.getKeepCards()));
-//		cr.setWin(false);
-//		cr.setKeepCards(null);
-//		System.out.println(fourStraightFourth(cr.getCards(), cr).isWin());
-//		System.out.println(Arrays.toString(cr.getKeepCards()));
-//		cr.setWin(false);
-//		cr.setKeepCards(null);
+		System.out.println(fourStraight(cr.getCards(), cr).isWin());
+		System.out.println(Arrays.toString(cr.getKeepCards()));
+		cr.setWin(false);
+		cr.setKeepCards(null);
+//		 System.out.println(fourStraightSecond(cr.getCards(), cr).isWin());
+//		 System.out.println(Arrays.toString(cr.getKeepCards()));
+//		 cr.setWin(false);
+//		 cr.setKeepCards(null);
+		System.out.println(fourStraightThird(cr.getCards(), cr).isWin());
+		System.out.println(Arrays.toString(cr.getKeepCards()));
+		cr.setWin(false);
+		cr.setKeepCards(null);
+		System.out.println(fourStraightFourth(cr.getCards(), cr).isWin());
+		System.out.println(Arrays.toString(cr.getKeepCards()));
+		cr.setWin(false);
+		cr.setKeepCards(null);
 		
 		System.out.println(fourStraightFourthJoker(cr.getCards(), cr).isWin());
 		System.out.println(Arrays.toString(cr.getKeepCards()));

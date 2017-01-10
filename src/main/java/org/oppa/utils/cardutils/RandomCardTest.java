@@ -52,6 +52,7 @@ public class RandomCardTest {
 		JLabel sevenBetterKeepJL = new JLabel("小对");
 		JLabel jokerJL = new JLabel("鬼牌");
 		JLabel fourOfAKindTwoTenTwoJL = new JLabel("小四梅连庄");
+		JLabel forceSevenBetterJL = new JLabel("强制一对");
 		final JComboBox<Integer> prefab = new JComboBox<Integer>();
 		for (int i = 0; i < 8; i++) {
 			prefab.addItem(i);
@@ -128,10 +129,14 @@ public class RandomCardTest {
 		for (int i = 0; i < 8; i++) {
 			prefab18.addItem(i);
 		}
-//		final JComboBox<Integer> prefab19 = new JComboBox<Integer>();
-//		for (int i = 0; i < 8; i++) {
-//			prefab19.addItem(i);
-//		}
+		final JComboBox<Integer> prefab19 = new JComboBox<Integer>();
+		for (int i = 0; i < 8; i++) {
+			prefab19.addItem(i);
+		}
+		final JComboBox<Integer> prefab20 = new JComboBox<Integer>();
+		for (int i = 0; i < 8; i++) {
+			prefab20.addItem(i);
+		}
 		
 		countjtf.setText("250000");
 		countjtf.addKeyListener(new KeyListener() {
@@ -147,7 +152,7 @@ public class RandomCardTest {
 							prefab5.getSelectedIndex(), prefab6.getSelectedIndex(), prefab7.getSelectedIndex(), prefab8.getSelectedIndex(), prefab9.getSelectedIndex(), prefab10.getSelectedIndex(), 
 							prefab11.getSelectedIndex(), prefab12.getSelectedIndex(), prefab13.getSelectedIndex(), prefab14.getSelectedIndex(), prefab15.getSelectedIndex(), prefab16.getSelectedIndex(), 
 							prefab17.getSelectedIndex(), prefab18.getSelectedIndex()
-//							, prefab19.getSelectedIndex()
+							, prefab19.getSelectedIndex(), prefab20.getSelectedIndex()
 							);
 //					cu.firstAndSecond(countjtf.getText());
 				}
@@ -166,7 +171,7 @@ public class RandomCardTest {
 						prefab5.getSelectedIndex(), prefab6.getSelectedIndex(), prefab7.getSelectedIndex(), prefab8.getSelectedIndex(), prefab9.getSelectedIndex(), prefab10.getSelectedIndex(), 
 						prefab11.getSelectedIndex(), prefab12.getSelectedIndex(), prefab13.getSelectedIndex(), prefab14.getSelectedIndex(), prefab15.getSelectedIndex(), prefab16.getSelectedIndex(), 
 						prefab17.getSelectedIndex(), prefab18.getSelectedIndex()
-//						,prefab19.getSelectedIndex()
+						,prefab19.getSelectedIndex(), prefab20.getSelectedIndex()
 						);
 //				cu.firstAndSecond(countjtf.getText());
 			}
@@ -213,8 +218,11 @@ public class RandomCardTest {
 		northJP.add(prefab17);
 		northJP.add(fourOfAKindTTJL);
 		northJP.add(prefab18);
-//		northJP.add(fourOfAKindTwoTenTwoJL);
-//		northJP.add(prefab19);
+		northJP.add(fourOfAKindTwoTenTwoJL);
+		northJP.add(prefab19);
+		northJP.add(forceSevenBetterJL);
+		northJP.add(prefab20);
+		
 		
 		northJP.add(jb);
 

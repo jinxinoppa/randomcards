@@ -34,10 +34,10 @@ public class FivepkSeoId {
 	private double prefabFourOfAKindTTCount;
 
 	private byte prefabFourOfAKindTwoTen;
-
+	
 	private byte prefabFourOfAKindTwoTenTwo;
 	private String prefabFourOfAKindTwoTenContinue;
-
+	
 	private byte prefabFullHouse;
 	private byte prefabFlush;
 	private byte prefabStraight;
@@ -47,12 +47,22 @@ public class FivepkSeoId {
 	private byte prefabFourFlush;
 	private byte prefabFourStraight;
 	private byte prefabSevenBetterKeep;
-
+	
 	private byte prefabJoker;
 
 	private long seoMachinePlayCount;
 	private int machineAuto;
+	private String compareHistoryCards;
 
+	private byte prefabForceSevenBetter;
+	private byte prefabForceSevenBetterCount;
+	
+	
+	private int prefabCompareBuff;
+	private byte prefabCompareCutDown;
+	private byte prefabCompareCutDownCount;
+	private byte prefabCompareSevenJoker;
+	
 	public int getMachineAuto() {
 		return machineAuto;
 	}
@@ -82,7 +92,7 @@ public class FivepkSeoId {
 			case 10 :
 				return prefabFullHouse;
 			case 48 :
-				return prefabFourOfAKindTwoTenTwo;
+				return prefabFourOfAKindTwoTenTwo;	
 			case 49 :
 				return prefabFourOfAKindTT;
 			case 50 :
@@ -101,6 +111,10 @@ public class FivepkSeoId {
 				return prefabRoyalFlush;
 			case 1000 :
 				return prefabFiveBars;
+			case 9997 :
+				return prefabCompareCutDown;
+			case 9998 :
+				return prefabForceSevenBetter;
 			case 9999 :
 				return prefabJoker;
 			default :
@@ -382,5 +396,68 @@ public class FivepkSeoId {
 
 	public void setPrefabFourOfAKindTwoTenTwo(byte prefabFourOfAKindTwoTenTwo) {
 		this.prefabFourOfAKindTwoTenTwo = prefabFourOfAKindTwoTenTwo;
+	}
+	
+	public String getCompareHistoryCards() {
+		return compareHistoryCards;
+	}
+
+	public void setCompareHistoryCards(String compareHistoryCards) {
+		this.compareHistoryCards = compareHistoryCards;
+	}
+	public void firstInLastOut(int compareCard) {
+		if (compareHistoryCards != null) {
+			StringBuffer sb = new StringBuffer();
+			sb.append(compareCard).append(",").append(compareHistoryCards.substring(0, compareHistoryCards.lastIndexOf(",") == -1 ? 0 : compareHistoryCards.lastIndexOf(",")));
+			setCompareHistoryCards(sb.toString());
+		}
+	}
+
+	public byte getPrefabForceSevenBetter() {
+		return prefabForceSevenBetter;
+	}
+
+	public void setPrefabForceSevenBetter(byte prefabForceSevenBetter) {
+		this.prefabForceSevenBetter = prefabForceSevenBetter;
+	}
+
+	public byte getPrefabForceSevenBetterCount() {
+		return prefabForceSevenBetterCount;
+	}
+
+	public void setPrefabForceSevenBetterCount(byte prefabForceSevenBetterCount) {
+		this.prefabForceSevenBetterCount = prefabForceSevenBetterCount;
+	}
+
+	public int getPrefabCompareBuff() {
+		return prefabCompareBuff;
+	}
+
+	public void setPrefabCompareBuff(int prefabCompareBuff) {
+		this.prefabCompareBuff = prefabCompareBuff;
+	}
+
+	public byte getPrefabCompareCutDown() {
+		return prefabCompareCutDown;
+	}
+
+	public void setPrefabCompareCutDown(byte prefabCompareCutDown) {
+		this.prefabCompareCutDown = prefabCompareCutDown;
+	}
+
+	public byte getPrefabCompareCutDownCount() {
+		return prefabCompareCutDownCount;
+	}
+
+	public void setPrefabCompareCutDownCount(byte prefabCompareCutDownCount) {
+		this.prefabCompareCutDownCount = prefabCompareCutDownCount;
+	}
+
+	public byte getPrefabCompareSevenJoker() {
+		return prefabCompareSevenJoker;
+	}
+
+	public void setPrefabCompareSevenJoker(byte prefabCompareSevenJoker) {
+		this.prefabCompareSevenJoker = prefabCompareSevenJoker;
 	}
 }
