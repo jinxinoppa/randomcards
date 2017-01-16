@@ -4,7 +4,7 @@
 
 	<groupId>org.oppa.utils</groupId>
 	<artifactId>RandomCards</artifactId>
-	<version>v2.0.0.170103</version>
+	<version>v2.0.0.170116</version>
 	<packaging>jar</packaging>
 
 	<name>cardutils</name>

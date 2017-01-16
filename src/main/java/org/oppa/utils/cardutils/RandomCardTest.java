@@ -51,94 +51,114 @@ public class RandomCardTest {
 		JLabel fourStraightJL = new JLabel("四张顺");
 		JLabel sevenBetterKeepJL = new JLabel("小对");
 		JLabel jokerJL = new JLabel("鬼牌");
-		JLabel fourOfAKindTwoTenTwoJL = new JLabel("小四梅连庄");
+//		JLabel fourOfAKindTwoTenTwoJL = new JLabel("小四梅连庄");
 		JLabel forceSevenBetterJL = new JLabel("强制一对");
 		final JComboBox<Integer> prefab = new JComboBox<Integer>();
 		for (int i = 0; i < 8; i++) {
 			prefab.addItem(i);
 		}
+		prefab.setSelectedIndex(6);
 		final JComboBox<Integer> prefab1 = new JComboBox<Integer>();
 		for (int i = 0; i < 8; i++) {
 			prefab1.addItem(i);
 		}
+		prefab1.setSelectedIndex(6);
 		final JComboBox<Integer> prefab2 = new JComboBox<Integer>();
 		for (int i = 0; i < 8; i++) {
 			prefab2.addItem(i);
 		}
+		prefab2.setSelectedIndex(6);
 		final JComboBox<Integer> prefab3 = new JComboBox<Integer>();
 		for (int i = 0; i < 8; i++) {
 			prefab3.addItem(i);
 		}
+		prefab3.setSelectedIndex(6);
 		final JComboBox<Integer> prefab4 = new JComboBox<Integer>();
 		for (int i = 0; i < 8; i++) {
 			prefab4.addItem(i);
 		}
+		prefab4.setSelectedIndex(7);
 		final JComboBox<Integer> prefab5 = new JComboBox<Integer>();
 		for (int i = 0; i < 8; i++) {
 			prefab5.addItem(i);
 		}
+		prefab5.setSelectedIndex(7);
 		final JComboBox<Integer> prefab6 = new JComboBox<Integer>();
 		for (int i = 0; i < 8; i++) {
 			prefab6.addItem(i);
 		}
+		prefab6.setSelectedIndex(4);
 		final JComboBox<Integer> prefab7 = new JComboBox<Integer>();
 		for (int i = 0; i < 8; i++) {
 			prefab7.addItem(i);
 		}
+		prefab7.setSelectedIndex(4);
 		final JComboBox<Integer> prefab8 = new JComboBox<Integer>();
 		for (int i = 0; i < 8; i++) {
 			prefab8.addItem(i);
 		}
+		prefab8.setSelectedIndex(4);
 		final JComboBox<Integer> prefab9 = new JComboBox<Integer>();
 		for (int i = 0; i < 8; i++) {
 			prefab9.addItem(i);
 		}
+		prefab9.setSelectedIndex(4);
 		final JComboBox<Integer> prefab10 = new JComboBox<Integer>();
 		for (int i = 0; i < 8; i++) {
 			prefab10.addItem(i);
 		}
+		prefab10.setSelectedIndex(4);
 		final JComboBox<Integer> prefab11 = new JComboBox<Integer>();
 		for (int i = 0; i < 8; i++) {
 			prefab11.addItem(i);
 		}
+		prefab11.setSelectedIndex(4);
 		final JComboBox<Integer> prefab12 = new JComboBox<Integer>();
 		for (int i = 0; i < 8; i++) {
 			prefab12.addItem(i);
 		}
+		prefab12.setSelectedIndex(4);
 		final JComboBox<Integer> prefab13 = new JComboBox<Integer>();
 		for (int i = 0; i < 8; i++) {
 			prefab13.addItem(i);
 		}
+		prefab13.setSelectedIndex(4);
 		final JComboBox<Integer> prefab14 = new JComboBox<Integer>();
 		for (int i = 0; i < 8; i++) {
 			prefab14.addItem(i);
 		}
+		prefab14.setSelectedIndex(4);
 		final JComboBox<Integer> prefab15 = new JComboBox<Integer>();
 		for (int i = 0; i < 8; i++) {
 			prefab15.addItem(i);
 		}
+		prefab15.setSelectedIndex(4);
 		final JComboBox<Integer> prefab16 = new JComboBox<Integer>();
 		for (int i = 0; i < 8; i++) {
 			prefab16.addItem(i);
 		}
+		prefab16.setSelectedIndex(4);
 		final JComboBox<Integer> prefab17 = new JComboBox<Integer>();
 		for (int i = 0; i < 8; i++) {
 			prefab17.addItem(i);
 		}
+		prefab17.setSelectedIndex(0);
 		final JComboBox<Integer> prefab18 = new JComboBox<Integer>();
 		for (int i = 0; i < 8; i++) {
 			prefab18.addItem(i);
 		}
+		prefab18.setSelectedIndex(3);
 		final JComboBox<Integer> prefab19 = new JComboBox<Integer>();
 		for (int i = 0; i < 8; i++) {
 			prefab19.addItem(i);
 		}
+//		prefab19.setSelectedIndex(3);
 		final JComboBox<Integer> prefab20 = new JComboBox<Integer>();
 		for (int i = 0; i < 8; i++) {
 			prefab20.addItem(i);
 		}
-		
-		countjtf.setText("250000");
+		prefab20.setSelectedIndex(4);
+		countjtf.setText("20000");
 		countjtf.addKeyListener(new KeyListener() {
 
 			public void keyTyped(KeyEvent e) {
@@ -148,11 +168,13 @@ public class RandomCardTest {
 			public void keyReleased(KeyEvent e) {
 				if (e.getKeyCode() == KeyEvent.VK_ENTER) {
 					cta.setText("");
-					cu.printAndExcel(countjtf.getText(), prefab.getSelectedIndex(), prefab1.getSelectedIndex(), prefab2.getSelectedIndex(), prefab3.getSelectedIndex(), prefab4.getSelectedIndex(), 
+					cu.printAndExcelForceSevenBetter(countjtf.getText(), prefab.getSelectedIndex(), prefab1.getSelectedIndex(), prefab2.getSelectedIndex(), prefab3.getSelectedIndex(), prefab4.getSelectedIndex(), 
 							prefab5.getSelectedIndex(), prefab6.getSelectedIndex(), prefab7.getSelectedIndex(), prefab8.getSelectedIndex(), prefab9.getSelectedIndex(), prefab10.getSelectedIndex(), 
 							prefab11.getSelectedIndex(), prefab12.getSelectedIndex(), prefab13.getSelectedIndex(), prefab14.getSelectedIndex(), prefab15.getSelectedIndex(), prefab16.getSelectedIndex(), 
 							prefab17.getSelectedIndex(), prefab18.getSelectedIndex()
-							, prefab19.getSelectedIndex(), prefab20.getSelectedIndex()
+							, 
+							prefab19.getSelectedIndex(), 
+							prefab20.getSelectedIndex()
 							);
 //					cu.firstAndSecond(countjtf.getText());
 				}
@@ -167,11 +189,13 @@ public class RandomCardTest {
 
 			public void actionPerformed(ActionEvent e) {
 				cta.setText("");
-				cu.printAndExcel(countjtf.getText(), prefab.getSelectedIndex(), prefab1.getSelectedIndex(), prefab2.getSelectedIndex(), prefab3.getSelectedIndex(), prefab4.getSelectedIndex(),
+				cu.printAndExcelForceSevenBetter(countjtf.getText(), prefab.getSelectedIndex(), prefab1.getSelectedIndex(), prefab2.getSelectedIndex(), prefab3.getSelectedIndex(), prefab4.getSelectedIndex(),
 						prefab5.getSelectedIndex(), prefab6.getSelectedIndex(), prefab7.getSelectedIndex(), prefab8.getSelectedIndex(), prefab9.getSelectedIndex(), prefab10.getSelectedIndex(), 
 						prefab11.getSelectedIndex(), prefab12.getSelectedIndex(), prefab13.getSelectedIndex(), prefab14.getSelectedIndex(), prefab15.getSelectedIndex(), prefab16.getSelectedIndex(), 
 						prefab17.getSelectedIndex(), prefab18.getSelectedIndex()
-						,prefab19.getSelectedIndex(), prefab20.getSelectedIndex()
+						,
+						prefab19.getSelectedIndex(), 
+						prefab20.getSelectedIndex()
 						);
 //				cu.firstAndSecond(countjtf.getText());
 			}
@@ -218,8 +242,8 @@ public class RandomCardTest {
 		northJP.add(prefab17);
 		northJP.add(fourOfAKindTTJL);
 		northJP.add(prefab18);
-		northJP.add(fourOfAKindTwoTenTwoJL);
-		northJP.add(prefab19);
+//		northJP.add(fourOfAKindTwoTenTwoJL);
+//		northJP.add(prefab19);
 		northJP.add(forceSevenBetterJL);
 		northJP.add(prefab20);
 		
