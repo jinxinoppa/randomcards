@@ -72,7 +72,7 @@ public class RandomCardTest {
 		for (int i = 0; i < 8; i++) {
 			prefab3.addItem(i);
 		}
-		prefab3.setSelectedIndex(6);
+		prefab3.setSelectedIndex(5);
 		final JComboBox<Integer> prefab4 = new JComboBox<Integer>();
 		for (int i = 0; i < 8; i++) {
 			prefab4.addItem(i);
@@ -82,12 +82,12 @@ public class RandomCardTest {
 		for (int i = 0; i < 8; i++) {
 			prefab5.addItem(i);
 		}
-		prefab5.setSelectedIndex(7);
+		prefab5.setSelectedIndex(3);
 		final JComboBox<Integer> prefab6 = new JComboBox<Integer>();
 		for (int i = 0; i < 8; i++) {
 			prefab6.addItem(i);
 		}
-		prefab6.setSelectedIndex(4);
+		prefab6.setSelectedIndex(5);
 		final JComboBox<Integer> prefab7 = new JComboBox<Integer>();
 		for (int i = 0; i < 8; i++) {
 			prefab7.addItem(i);
@@ -142,12 +142,12 @@ public class RandomCardTest {
 		for (int i = 0; i < 8; i++) {
 			prefab17.addItem(i);
 		}
-		prefab17.setSelectedIndex(0);
+		prefab17.setSelectedIndex(4);
 		final JComboBox<Integer> prefab18 = new JComboBox<Integer>();
 		for (int i = 0; i < 8; i++) {
 			prefab18.addItem(i);
 		}
-		prefab18.setSelectedIndex(3);
+		prefab18.setSelectedIndex(4);
 		final JComboBox<Integer> prefab19 = new JComboBox<Integer>();
 		for (int i = 0; i < 8; i++) {
 			prefab19.addItem(i);

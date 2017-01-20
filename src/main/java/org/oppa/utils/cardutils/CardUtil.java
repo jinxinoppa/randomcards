@@ -54,16 +54,16 @@ public class CardUtil {
 	// {11, 24, 37, 50, 1}, {12, 25, 38, 51, 1}, {13, 26, 39, 52, 1}
 	};
 	public final static String[] randomNegative3 = new String[]{"40,5", "45,10", "50,15", "55,20", "60,25", "65,30", "70,35", "100,100"};
-	public final static String[] randomNegative2 = new String[]{"35,10", "40,15", "45,20", "50,25", "55,20", "60,25", "65,25", "100,100"};
-	public final static String[] randomNegative1 = new String[]{"35,10", "40,15", "45,20", "50,25", "50,20", "60,30", "65,35", "100,100"};
-	public final static String[] random1 = new String[]{"50,20", "55,25", "60,30", "65,35", "70,40", "75,45", "80,50", "85,55"};
-	public final static String[] random2 = new String[]{"45,5", "50,10", "55,15", "60,20", "65,25", "70,30", "75,35", "80,40"};
-	public final static String[] random3 = new String[]{"65,15", "70,20", "75,25", "80,30", "85,35", "90,40", "95,45", "99,50"};
-	public final static String[] random5 = new String[]{"25,30", "30,35", "35,40", "40,45", "45,45", "50,50", "55,55", "60,60"};
-	public final static String[] random7 = new String[]{"35,15", "40,20", "45,25", "50,30", "55,35", "60,40", "65,55", "70,60"};
-	public final static String[] random10 = new String[]{"75,30", "80,35", "85,40", "90,45", "95,50", "95,55", "95,60", "99,65"};
-	public final static String[] random50 = new String[]{"60,65", "65,70", "70,75", "75,80", "80,85", "85,90", "90,95", "100,100"};
-	public final static String[] random79 = new String[]{"65,70", "70,75", "75,80", "80,85", "85,90", "90,95", "95,99", "100,100"};
+	public final static String[] randomNegative2 = new String[]{"0,0", "55,25", "55,30", "50,20", "55,20", "60,20", "65,25", "100,100"};
+	public final static String[] randomNegative1 = new String[]{"0,0", "50,10", "50,15", "50,18", "50,20", "55,20", "60,20", "100,100"};
+	public final static String[] random1 = new String[]{"65,25", "65,30", "70,30", "70,35", "70,40", "75,40", "75,45", "80,45"};
+	public final static String[] random2 = new String[]{"60,20", "65,25", "70,25", "70,30", "75,30", "75,35", "80,35", "80,40"};
+	public final static String[] random3 = new String[]{"80,23", "80,26", "85,29", "85,32", "85,35", "85,38", "85,41", "90,50"};
+	public final static String[] random5 = new String[]{"55,15", "55,20", "55,25", "55,30", "55,34", "60,37", "60,40", "65,45"};
+	public final static String[] random7 = new String[]{"60,10", "60,14", "60,19", "60,24", "60,29", "65,30", "65,35", "70,40"};
+	public final static String[] random10 = new String[]{"95,35", "95,40", "95,45", "95,50", "95,54", "95,60", "95,65", "95,70"};
+	public final static String[] random50 = new String[]{"95,50", "95,55", "95,60", "95,65", "95,70", "95,75", "95,80", "100,100"};
+	public final static String[] random79 = new String[]{"95,80", "95,85", "95,87", "95,90", "95,93", "95,95", "95,97", "100,100"};
 	public final static String[] random9997 = new String[]{"5,12", "5,12", "5,12", "5,12", "4,10", "4,9", "4,7", "3,6"};
 	public final static String[] random9998 = new String[]{"2,5", "2,5", "2,5", "2,5", "2,5", "2,5", "2,5", "100,100"};
 	public final static String[] random9999 = new String[]{"99,99", "80,80", "60,60", "40,40", "20,20", "10,10", "1,1", "100,100"};
@@ -71,8 +71,8 @@ public class CardUtil {
 	public final static List<FivepkPrefab> fivepkPrefabList = new ArrayList<FivepkPrefab>(5);
 	static {
 //		fivepkPrefabList.add(new FivepkPrefab(48, "20,23", "17,19", "14,16", "11,13", "8,10", "5,7", "2,4", "0"));
-		fivepkPrefabList.add(new FivepkPrefab(49, "70", "60", "50", "40", "20", "15", "10", "0"));
-		fivepkPrefabList.add(new FivepkPrefab(78, "50", "40", "30", "25", "20", "15", "10", "0"));
+		fivepkPrefabList.add(new FivepkPrefab(49, "70", "60", "50", "40", "30", "20", "10", "0"));
+		fivepkPrefabList.add(new FivepkPrefab(78, "50", "45", "40", "35", "30", "20", "10", "0"));
 //		fivepkPrefabList.add(new FivepkPrefab(80, 5, 30, 26, 20, 16, 12, 4, 0));
 		fivepkPrefabList.add(new FivepkPrefab(120, "5", "30", "26", "20", "16", "12", "4", "0"));
 		fivepkPrefabList.add(new FivepkPrefab(250, "5", "16", "14", "12", "10", "6", "2", "0"));
